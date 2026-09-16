@@ -17,6 +17,8 @@ import UseCaseTabs from './components/UseCaseTabs';
 import HowItWorks from './components/HowItWorks';
 import TestimonialSection from './components/TestimonialSection';
 import ComparisonTable from './components/ComparisonTable';
+import FaqAccordion from './components/FaqAccordion';
+import StickyCtaButton from './components/StickyCtaButton';
 
 const COUNTRIES = [
   { isoCode: 'in', name: 'India', dial: '+91' },
@@ -402,6 +404,7 @@ function App() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--paper)' }}>
+      <StickyCtaButton show={showStickyCta} scrollToForm={scrollToForm} />
 
       {/* ============ HEADER ============ */}
       <header className={`site-header ${scrolled ? 'scrolled' : ''}`}>
@@ -832,11 +835,7 @@ function App() {
             </div>
           </div>
 
-          {/* Section 11: FAQ Accordion */}
-          <div style={{ marginTop: 60, textAlign: 'center', padding: '60px 0', borderTop: '1px solid #e2e8f0', opacity: 0.4 }}>
-            <h2 style={{ fontSize: 24, fontWeight: 700 }}>Section 11: FAQ Accordion</h2>
-            <p style={{ color: 'var(--slate)' }}>6 common objection questions</p>
-          </div>
+          <FaqAccordion scrollToForm={scrollToForm} />
         </div>
       </section>
 
