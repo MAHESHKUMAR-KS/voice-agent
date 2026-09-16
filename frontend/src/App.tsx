@@ -15,6 +15,8 @@ import {
 import ProblemSection from './components/ProblemSection';
 import UseCaseTabs from './components/UseCaseTabs';
 import HowItWorks from './components/HowItWorks';
+import TestimonialSection from './components/TestimonialSection';
+import ComparisonTable from './components/ComparisonTable';
 
 const COUNTRIES = [
   { isoCode: 'in', name: 'India', dial: '+91' },
@@ -653,17 +655,9 @@ function App() {
 
           <HowItWorks />
 
-          {/* Section 8: Testimonials */}
-          <div style={{ marginTop: 60, textAlign: 'center', padding: '60px 0', borderTop: '1px solid #e2e8f0', opacity: 0.4 }}>
-            <h2 style={{ fontSize: 24, fontWeight: 700 }}>Section 8: Testimonials</h2>
-            <p style={{ color: 'var(--slate)' }}>2-3 testimonial cards with metrics</p>
-          </div>
+          <TestimonialSection />
 
-          {/* Section 9: Comparison Table */}
-          <div style={{ marginTop: 60, textAlign: 'center', padding: '60px 0', borderTop: '1px solid #e2e8f0', opacity: 0.4 }}>
-            <h2 style={{ fontSize: 24, fontWeight: 700 }}>Section 9: Comparison Table</h2>
-            <p style={{ color: 'var(--slate)' }}>Voice RAG vs ChatGPT vs Knowledge Bases</p>
-          </div>
+          <ComparisonTable />
 
           {/* Section 10: Form Section */}
           <div
