@@ -12,6 +12,9 @@ import {
   Mic,
   ChevronDown,
 } from 'lucide-react';
+import ProblemSection from './components/ProblemSection';
+import UseCaseTabs from './components/UseCaseTabs';
+import HowItWorks from './components/HowItWorks';
 
 const COUNTRIES = [
   { isoCode: 'in', name: 'India', dial: '+91' },
@@ -644,23 +647,11 @@ function App() {
           </div>
 
           {/* ============ PLACEHOLDER SECTIONS ============ */}
-          {/* Section 5: Problems */}
-          <div style={{ marginTop: 120, textAlign: 'center', padding: '60px 0', borderTop: '1px solid #e2e8f0', opacity: 0.4 }}>
-            <h2 style={{ fontSize: 24, fontWeight: 700 }}>Section 5: Problem/Pain Points</h2>
-            <p style={{ color: 'var(--slate)' }}>3-column grid with pain points</p>
-          </div>
+          <ProblemSection />
 
-          {/* Section 6: Use Cases */}
-          <div style={{ marginTop: 60, textAlign: 'center', padding: '60px 0', borderTop: '1px solid #e2e8f0', opacity: 0.4 }}>
-            <h2 style={{ fontSize: 24, fontWeight: 700 }}>Section 6: Use Case Tabs</h2>
-            <p style={{ color: 'var(--slate)' }}>4 tabs with field support, customer care, healthcare, internal SOP</p>
-          </div>
+          <UseCaseTabs scrollToForm={scrollToForm} />
 
-          {/* Section 7: How It Works */}
-          <div style={{ marginTop: 60, textAlign: 'center', padding: '60px 0', borderTop: '1px solid #e2e8f0', opacity: 0.4 }}>
-            <h2 style={{ fontSize: 24, fontWeight: 700 }}>Section 7: How It Works</h2>
-            <p style={{ color: 'var(--slate)' }}>3-step timeline (Upload, Configure, Deploy)</p>
-          </div>
+          <HowItWorks />
 
           {/* Section 8: Testimonials */}
           <div style={{ marginTop: 60, textAlign: 'center', padding: '60px 0', borderTop: '1px solid #e2e8f0', opacity: 0.4 }}>
