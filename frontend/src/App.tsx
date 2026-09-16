@@ -1,17 +1,51 @@
 import { useState, useEffect, useRef, FormEvent } from 'react';
 import {
-  Mic,
   CheckCircle2,
   ArrowRight,
   Loader2,
-  Play,
   Shield,
-  Clock,
-  TrendingUp,
-  Headphones,
-  Sparkles,
+  Lock,
+  Zap,
   ChevronRight,
+  Zap as Lightning,
+  Target,
+  Mic,
+  ChevronDown,
 } from 'lucide-react';
+
+const COUNTRIES = [
+  { isoCode: 'in', name: 'India', dial: '+91' },
+  { isoCode: 'us', name: 'United States', dial: '+1' },
+  { isoCode: 'gb', name: 'United Kingdom', dial: '+44' },
+  { isoCode: 'ca', name: 'Canada', dial: '+1' },
+  { isoCode: 'au', name: 'Australia', dial: '+61' },
+  { isoCode: 'de', name: 'Germany', dial: '+49' },
+  { isoCode: 'fr', name: 'France', dial: '+33' },
+  { isoCode: 'it', name: 'Italy', dial: '+39' },
+  { isoCode: 'es', name: 'Spain', dial: '+34' },
+  { isoCode: 'nz', name: 'New Zealand', dial: '+64' },
+  { isoCode: 'za', name: 'South Africa', dial: '+27' },
+  { isoCode: 'br', name: 'Brazil', dial: '+55' },
+  { isoCode: 'mx', name: 'Mexico', dial: '+52' },
+  { isoCode: 'sg', name: 'Singapore', dial: '+65' },
+  { isoCode: 'my', name: 'Malaysia', dial: '+60' },
+  { isoCode: 'id', name: 'Indonesia', dial: '+62' },
+  { isoCode: 'th', name: 'Thailand', dial: '+66' },
+  { isoCode: 'ph', name: 'Philippines', dial: '+63' },
+  { isoCode: 'ae', name: 'United Arab Emirates', dial: '+971' },
+  { isoCode: 'sa', name: 'Saudi Arabia', dial: '+966' },
+  { isoCode: 'nl', name: 'Netherlands', dial: '+31' },
+  { isoCode: 'be', name: 'Belgium', dial: '+32' },
+  { isoCode: 'ch', name: 'Switzerland', dial: '+41' },
+  { isoCode: 'at', name: 'Austria', dial: '+43' },
+  { isoCode: 'se', name: 'Sweden', dial: '+46' },
+  { isoCode: 'no', name: 'Norway', dial: '+47' },
+  { isoCode: 'dk', name: 'Denmark', dial: '+45' },
+  { isoCode: 'pl', name: 'Poland', dial: '+48' },
+  { isoCode: 'gr', name: 'Greece', dial: '+30' },
+  { isoCode: 'jp', name: 'Japan', dial: '+81' },
+  { isoCode: 'cn', name: 'China', dial: '+86' },
+];
 
 interface FormData {
   full_name: string;
@@ -38,6 +72,252 @@ function useInView(threshold = 0.15) {
   return { ref, visible };
 }
 
+interface PhoneInputProps {
+  value: string;
+  onChange: (value: string) => void;
+  required?: boolean;
+}
+
+function PhoneInputWrapper({ value, onChange, required }: PhoneInputProps) {
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState(COUNTRIES[0]);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowDropdown(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    if (showDropdown && searchInputRef.current) {
+      setTimeout(() => searchInputRef.current?.focus(), 50);
+    }
+  }, [showDropdown]);
+
+  const filteredCountries = COUNTRIES.filter(
+    (country) =>
+      country.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      country.dial.includes(searchTerm) ||
+      country.isoCode.includes(searchTerm)
+  );
+
+  const handleSelectCountry = (country: typeof COUNTRIES[0]) => {
+    setSelectedCountry(country);
+    setShowDropdown(false);
+    setSearchTerm('');
+  };
+
+  const phoneNumber = value.replace(/^\+\d+/, '').trim();
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const phoneOnly = e.target.value.replace(/\D/g, '');
+    onChange(selectedCountry.dial + phoneOnly);
+  };
+
+  return (
+    <div
+      ref={dropdownRef}
+      style={{
+        display: 'flex',
+        gap: 0,
+        position: 'relative',
+        width: '100%',
+        border: '1px solid #e2e8f0',
+        borderRadius: '8px',
+        background: '#f7f9fc',
+        transition: 'border-color 0.3s, box-shadow 0.3s',
+      }}
+    >
+      <button
+        ref={buttonRef}
+        type="button"
+        onClick={() => setShowDropdown(!showDropdown)}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          padding: '12px 14px',
+          background: '#eef2f7',
+          border: 'none',
+          borderRight: '1px solid #e2e8f0',
+          fontFamily: 'inherit',
+          fontSize: '14px',
+          fontWeight: 600,
+          color: '#0a1628',
+          cursor: 'pointer',
+          outline: 'none',
+          borderRadius: '8px 0 0 8px',
+          transition: 'background 0.2s',
+          minWidth: '110px',
+          justifyContent: 'center',
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.background = '#e2e8f0')}
+        onMouseLeave={(e) => (e.currentTarget.style.background = '#eef2f7')}
+      >
+        <img
+          src={`https://flagcdn.com/w20/${selectedCountry.isoCode}.png`}
+          alt={selectedCountry.name}
+          style={{
+            width: '20px',
+            height: '14px',
+            objectFit: 'cover',
+            borderRadius: '2px',
+            boxShadow: '0 1px 2px rgba(0,0,0,0.2)',
+          }}
+        />
+        <span style={{ fontWeight: 600 }}>{selectedCountry.dial}</span>
+        <ChevronDown
+          style={{
+            width: 10,
+            height: 10,
+            transition: 'transform 0.3s',
+            transform: showDropdown ? 'rotate(180deg)' : 'rotate(0deg)',
+          }}
+        />
+      </button>
+
+      {showDropdown && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '100%',
+            left: 0,
+            background: 'white',
+            border: '1px solid #3b82f6',
+            borderRadius: '8px',
+            marginTop: '4px',
+            zIndex: 99999,
+            width: '300px',
+            maxWidth: '90vw',
+            boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
+            overflow: 'hidden',
+            animation: 'fadeIn 0.2s ease',
+          }}
+        >
+          <style>{`
+            @keyframes fadeIn {
+              from { opacity: 0; transform: translateY(-6px); }
+              to { opacity: 1; transform: translateY(0); }
+            }
+          `}</style>
+          <div
+            style={{
+              padding: '8px',
+              background: 'white',
+              borderBottom: '1px solid #edf2f7',
+            }}
+          >
+            <input
+              ref={searchInputRef}
+              type="text"
+              placeholder="Search"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                width: '100%',
+                padding: '8px 12px',
+                background: 'white',
+                border: '2px solid #3b82f6',
+                borderRadius: '4px',
+                fontSize: '14px',
+                fontFamily: 'inherit',
+                boxSizing: 'border-box',
+                outline: 'none',
+                boxShadow: '0 0 0 2px rgba(59, 130, 246, 0.15)',
+              }}
+            />
+          </div>
+          <div
+            style={{
+              maxHeight: '220px',
+              overflowY: 'auto',
+              listStyle: 'none',
+              margin: 0,
+              padding: 0,
+            }}
+          >
+            {filteredCountries.length > 0 ? (
+              filteredCountries.map((country) => (
+                <button
+                  key={country.isoCode}
+                  type="button"
+                  onClick={() => handleSelectCountry(country)}
+                  style={{
+                    width: '100%',
+                    padding: '10px 14px',
+                    border: 'none',
+                    background: 'white',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    fontSize: '14px',
+                    borderBottom: '1px solid #f3f4f6',
+                    transition: 'background 0.2s',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = '#f1f5f9')}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = 'white')}
+                >
+                  <img
+                    src={`https://flagcdn.com/w20/${country.isoCode}.png`}
+                    alt={country.name}
+                    style={{
+                      width: '20px',
+                      height: '14px',
+                      objectFit: 'cover',
+                      borderRadius: '2px',
+                    }}
+                  />
+                  <span style={{ fontSize: '14px', fontWeight: 500, color: '#0a1628', flex: 1 }}>
+                    {country.name}
+                  </span>
+                  <span style={{ fontSize: '12px', fontWeight: 500, color: '#8896ab' }}>
+                    {country.dial}
+                  </span>
+                </button>
+              ))
+            ) : (
+              <div style={{ padding: '14px', textAlign: 'center', color: '#8896ab', fontSize: '14px' }}>
+                No country found
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      <input
+        type="tel"
+        value={phoneNumber}
+        onChange={handlePhoneChange}
+        required={required}
+        placeholder="081234 56789"
+        style={{
+          border: 'none',
+          background: 'transparent',
+          padding: '12px 16px',
+          flex: 1,
+          width: '100%',
+          outline: 'none',
+          fontSize: '14px',
+          fontFamily: 'inherit',
+          color: '#0a1628',
+        }}
+      />
+    </div>
+  );
+}
+
 function App() {
   const [formData, setFormData] = useState<FormData>({
     full_name: '',
@@ -52,16 +332,24 @@ function App() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState('');
   const [scrolled, setScrolled] = useState(false);
+  const [isMarqueeHovered, setIsMarqueeHovered] = useState(false);
+  const [showStickyCta, setShowStickyCta] = useState(false);
+  const formRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 20);
+      setShowStickyCta(window.scrollY > 800);
+    };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   const heroAnim = useInView();
-  const metricsAnim = useInView();
-  const demoAnim = useInView();
+
+  const scrollToForm = () => {
+    formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -93,6 +381,20 @@ function App() {
     }
   };
 
+  const clients = [
+    { name: 'Adople', logo: '/asset/clients/Adople-logo.webp' },
+    { name: 'AT&T', logo: '/asset/clients/AT&T.webp' },
+    { name: 'Broadridge', logo: '/asset/clients/broadridge.webp' },
+    { name: 'Confluence', logo: '/asset/clients/confluence.webp' },
+    { name: 'Crocs', logo: '/asset/clients/crocs.webp' },
+    { name: 'Elevance Health', logo: '/asset/clients/elevance-health.webp' },
+    { name: 'Lilly', logo: '/asset/clients/Lilly.webp' },
+    { name: 'NHS', logo: '/asset/clients/nhs.jpg' },
+    { name: 'Randstad', logo: '/asset/clients/randstad.webp' },
+    { name: 'Syngenta', logo: '/asset/clients/syngenta.webp' },
+    { name: 'Vodafone', logo: '/asset/clients/vodafone.webp' },
+  ];
+
   return (
     <div style={{ minHeight: '100vh', background: 'var(--paper)' }}>
 
@@ -112,7 +414,7 @@ function App() {
             <div>
               <div style={{ fontWeight: 800, fontSize: 17, color: 'var(--primary)' }}>Adople AI</div>
               <div className="mono" style={{ fontSize: 8, color: 'var(--slate)', letterSpacing: '0.08em' }}>
-                VOICE AGENT PLATFORM
+                VOICE RAG PLATFORM
               </div>
             </div>
           </div>
@@ -120,20 +422,36 @@ function App() {
           <nav style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
             <a href="#features" style={{
               textDecoration: 'none', fontSize: 14, fontWeight: 500, color: 'var(--slate)',
-              transition: 'color 0.2s'
-            }}>Features</a>
-            <a href="#demo" style={{
+              transition: 'color 0.2s',
+              cursor: 'pointer'
+            }} onClick={scrollToForm}>Features</a>
+            <a href="#form" style={{
               textDecoration: 'none', fontSize: 14, fontWeight: 500, color: 'var(--slate)',
-              transition: 'color 0.2s'
-            }}>Demo</a>
+              transition: 'color 0.2s',
+              cursor: 'pointer'
+            }} onClick={scrollToForm}>Demo</a>
           </nav>
 
-          <a href="#demo" className="btn-primary" style={{ padding: '10px 22px', fontSize: 14 }}>
-            <span>Get Demo</span>
+          <button onClick={scrollToForm} className="btn-primary" style={{ padding: '10px 22px', fontSize: 14, border: 'none', cursor: 'pointer' }}>
+            <span>See Demo</span>
             <ArrowRight style={{ width: 16, height: 16 }} />
-          </a>
+          </button>
         </div>
       </header>
+
+      {/* ============ ALERT BANNER ============ */}
+      <div style={{
+        background: '#EFF6FF',
+        borderBottom: '1px solid #DBEAFE',
+        padding: '14px 0',
+        textAlign: 'center',
+        fontSize: 14,
+        color: 'var(--primary)',
+        fontWeight: 500,
+      }}>
+        <Zap style={{ width: 14, height: 14, display: 'inline-block', marginRight: 6, marginBottom: -2 }} />
+        Live Voice RAG Sandbox — Upload any PDF and start talking in seconds.
+      </div>
 
       {/* ============ HERO SECTION ============ */}
       <section className="hero-section" style={{ padding: '100px 0 80px' }} id="hero">
@@ -144,38 +462,50 @@ function App() {
             className="hero-grid"
             style={{
               display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: 60,
-              alignItems: 'center',
+              gridTemplateColumns: '1fr',
+              gap: 0,
+              alignItems: 'start',
+              textAlign: 'center',
             }}
           >
-            {/* Left Content */}
+            {/* Main Content - Centered */}
             <div>
+              {/* Outcome Badge */}
               <div
                 className={`animate-in ${heroAnim.visible ? 'visible' : ''}`}
-                style={{ marginBottom: 20 }}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  background: '#F0F9FF',
+                  border: '1px solid #BAE6FD',
+                  borderRadius: 32,
+                  padding: '10px 20px',
+                  marginBottom: 32,
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: 'var(--primary)',
+                }}
               >
-                <span className="float-badge">
-                  <Sparkles style={{ width: 14, height: 14, color: 'var(--accent)' }} />
-                  <span className="mono" style={{ fontSize: 12, letterSpacing: '0.06em', fontWeight: 600 }}>
-                    AI VOICE DEFLECTION
-                  </span>
-                </span>
+                <Zap style={{ width: 14, height: 14 }} />
+                4.2x faster resolution times • 87% reduction in hold times
               </div>
 
               <h1
                 className={`animate-in hero-title ${heroAnim.visible ? 'visible' : ''} animate-delay-1`}
                 style={{
-                  fontSize: 54,
+                  fontSize: 64,
                   fontWeight: 900,
                   lineHeight: 1.1,
                   marginBottom: 24,
                   letterSpacing: '-0.03em',
+                  maxWidth: 900,
+                  margin: '0 auto 24px',
                 }}
               >
-                Customer calls<br />answered instantly.
+                Turn 45-Minute Support Calls
                 <span className="gradient-text" style={{ display: 'block', paddingBottom: 4 }}>
-                  No waiting.
+                  Into 90-Second Voice Conversations
                 </span>
               </h1>
 
@@ -185,377 +515,192 @@ function App() {
                   fontSize: 18,
                   color: 'var(--slate)',
                   lineHeight: 1.75,
-                  marginBottom: 36,
-                  maxWidth: 480,
+                  marginBottom: 48,
+                  maxWidth: 680,
+                  margin: '0 auto 48px',
                 }}
               >
-                Deploy a voice AI agent that handles FAQs, billing, scheduling, and escalations — working 24/7 with zero training required.
+                Deploy AI voice agents that answer complex questions from your PDFs, manuals, and SOPs — with zero hallucinations and complete data sovereignty. Used by Fortune 500 healthcare, telecom, and insurance teams.
               </p>
 
+              {/* Trust Row */}
               <div
                 className={`animate-in ${heroAnim.visible ? 'visible' : ''} animate-delay-3`}
-                style={{ display: 'grid', gap: 10, marginBottom: 36 }}
+                style={{ display: 'flex', gap: 32, justifyContent: 'center', marginBottom: 48, flexWrap: 'wrap' }}
               >
                 {[
-                  { icon: '⚡', text: '65% call deflection on day one', bg: '#FEF3C7' },
-                  { icon: '🎯', text: 'Deploy in 14 days, live forever', bg: '#DBEAFE' },
-                  { icon: '🔒', text: 'HIPAA-ready, your data stays yours', bg: '#D1FAE5' }
+                  { Icon: Shield, text: 'SOC 2 Certified' },
+                  { Icon: Lock, text: 'Zero AI Training' },
+                  { Icon: Lightning, text: 'Live in 24 Hours' }
                 ].map((item, i) => (
-                  <div key={i} className="feature-pill">
-                    <div className="feature-icon" style={{ background: item.bg }}>
-                      {item.icon}
-                    </div>
-                    <span style={{ fontWeight: 500 }}>{item.text}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div
-                className={`animate-in ${heroAnim.visible ? 'visible' : ''} animate-delay-4`}
-                style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}
-              >
-                <a href="#demo" className="btn-primary">
-                  <span>See It In Action</span>
-                  <ArrowRight style={{ width: 18, height: 18 }} />
-                </a>
-                <a href="#demo" className="btn-secondary" style={{ padding: '12px 24px' }}>
-                  <Play style={{ width: 16, height: 16 }} />
-                  <span>Watch Demo</span>
-                </a>
-              </div>
-            </div>
-
-            {/* Right: Animated Voice Visualization */}
-            <div
-              className={`animate-in ${heroAnim.visible ? 'visible' : ''} animate-delay-2`}
-            >
-              <div className="voice-viz">
-                <div className="voice-ring" />
-                <div className="voice-ring" />
-                <div className="voice-ring" />
-                <div className="voice-ring" />
-                <div className="voice-core">
-                  <Mic style={{ width: 40, height: 40, color: 'var(--white)' }} />
-                </div>
-
-                {/* Floating stat badges */}
-                <div style={{
-                  position: 'absolute',
-                  top: '12%',
-                  right: '8%',
-                  background: 'var(--white)',
-                  borderRadius: 14,
-                  padding: '12px 18px',
-                  boxShadow: '0 8px 25px rgba(0,0,0,0.08)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 10,
-                  animation: 'core-float 4s ease-in-out infinite',
-                  animationDelay: '0.5s',
-                }}>
-                  <div style={{
-                    width: 36, height: 36, borderRadius: 10,
-                    background: '#DBEAFE',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  }}>
-                    <TrendingUp style={{ width: 18, height: 18, color: 'var(--primary)' }} />
-                  </div>
-                  <div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)' }}>65%</div>
-                    <div style={{ fontSize: 10, color: 'var(--slate)' }}>Call deflection</div>
-                  </div>
-                </div>
-
-                <div style={{
-                  position: 'absolute',
-                  bottom: '15%',
-                  left: '5%',
-                  background: 'var(--white)',
-                  borderRadius: 14,
-                  padding: '12px 18px',
-                  boxShadow: '0 8px 25px rgba(0,0,0,0.08)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 10,
-                  animation: 'core-float 4s ease-in-out infinite',
-                  animationDelay: '1.5s',
-                }}>
-                  <div style={{
-                    width: 36, height: 36, borderRadius: 10,
-                    background: '#D1FAE5',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  }}>
-                    <Clock style={{ width: 18, height: 18, color: '#16a34a' }} />
-                  </div>
-                  <div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)' }}>24/7</div>
-                    <div style={{ fontSize: 10, color: 'var(--slate)' }}>Always on</div>
-                  </div>
-                </div>
-
-                <div style={{
-                  position: 'absolute',
-                  bottom: '8%',
-                  right: '15%',
-                  background: 'var(--white)',
-                  borderRadius: 14,
-                  padding: '10px 16px',
-                  boxShadow: '0 8px 25px rgba(0,0,0,0.08)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                  animation: 'core-float 4s ease-in-out infinite',
-                  animationDelay: '2.2s',
-                }}>
-                  <div className="sound-bars">
-                    {Array.from({ length: 7 }).map((_, i) => (
-                      <div key={i} className="sound-bar" />
-                    ))}
-                  </div>
-                  <span style={{ fontSize: 11, color: 'var(--slate)', fontWeight: 500 }}>Live</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Social proof */}
-          <div style={{ marginTop: 80, textAlign: 'center' }}>
-            <p className="mono" style={{
-              fontSize: 11, color: 'var(--slate-light)', letterSpacing: '0.08em', marginBottom: 24,
-              fontWeight: 500, textTransform: 'uppercase',
-            }}>
-              Trusted by support teams at
-            </p>
-            <div className="logo-bar">
-              {['Stripe', 'Shopify', 'Zendesk', 'HubSpot', 'Twilio'].map(name => (
-                <span key={name} style={{
-                  fontWeight: 700, fontSize: 20, color: 'var(--ink)', letterSpacing: '-0.01em',
-                }}>
-                  {name}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ============ METRICS SECTION ============ */}
-      <section id="features" style={{ padding: '80px 0', background: 'var(--white)' }}>
-        <div
-          ref={metricsAnim.ref}
-          style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}
-        >
-          <div style={{ textAlign: 'center', marginBottom: 56 }}>
-            <p
-              className={`mono animate-in ${metricsAnim.visible ? 'visible' : ''}`}
-              style={{
-                fontSize: 12, color: 'var(--primary)', letterSpacing: '0.08em', fontWeight: 600,
-                marginBottom: 12, textTransform: 'uppercase',
-              }}
-            >
-              Why teams switch
-            </p>
-            <h2
-              className={`section-title animate-in ${metricsAnim.visible ? 'visible' : ''} animate-delay-1`}
-              style={{ fontSize: 40, fontWeight: 800, lineHeight: 1.15, letterSpacing: '-0.03em' }}
-            >
-              Results from day one,<br />
-              <span className="gradient-text">not day ninety.</span>
-            </h2>
-          </div>
-
-          <div
-            className="metrics-grid"
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(4, 1fr)',
-              gap: 20,
-            }}
-          >
-            {[
-              {
-                icon: <TrendingUp style={{ width: 22, height: 22, color: 'var(--primary)' }} />,
-                metric: '65%',
-                label: 'Call deflection',
-                detail: 'Average on day one',
-                bg: '#DBEAFE',
-              },
-              {
-                icon: <Clock style={{ width: 22, height: 22, color: '#7C3AED' }} />,
-                metric: '< 14 days',
-                label: 'Time to deploy',
-                detail: 'Full production ready',
-                bg: '#EDE9FE',
-              },
-              {
-                icon: <Shield style={{ width: 22, height: 22, color: '#16a34a' }} />,
-                metric: 'HIPAA',
-                label: 'Compliant',
-                detail: 'SOC 2 Type II certified',
-                bg: '#D1FAE5',
-              },
-              {
-                icon: <Headphones style={{ width: 22, height: 22, color: '#ea580c' }} />,
-                metric: '24/7',
-                label: 'Always available',
-                detail: 'Zero hold time',
-                bg: '#FEF3C7',
-              },
-            ].map((item, i) => (
-              <div
-                key={i}
-                className={`metric-card animate-in ${metricsAnim.visible ? 'visible' : ''}`}
-                style={{ transitionDelay: `${0.1 + i * 0.1}s` }}
-              >
-                <div style={{
-                  width: 44, height: 44, borderRadius: 12,
-                  background: item.bg,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  marginBottom: 20,
-                }}>
-                  {item.icon}
-                </div>
-                <div className="mono" style={{
-                  fontSize: 32, fontWeight: 800, color: 'var(--ink)',
-                  letterSpacing: '-0.03em', lineHeight: 1, marginBottom: 6,
-                }}>
-                  {item.metric}
-                </div>
-                <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--ink)', marginBottom: 4 }}>
-                  {item.label}
-                </div>
-                <div style={{ fontSize: 13, color: 'var(--slate)' }}>
-                  {item.detail}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ============ DEMO + FORM SECTION ============ */}
-      <section id="demo" style={{
-        padding: '80px 0 100px',
-        background: 'linear-gradient(180deg, var(--paper) 0%, #EFF6FF 100%)',
-      }}>
-        <div
-          ref={demoAnim.ref}
-          style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}
-        >
-          <div
-            className="demo-grid"
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 460px',
-              gap: 56,
-              alignItems: 'start',
-            }}
-          >
-            {/* Left: Demo Video */}
-            <div>
-              <h2
-                className={`section-title animate-in ${demoAnim.visible ? 'visible' : ''}`}
-                style={{
-                  fontSize: 42,
-                  fontWeight: 800,
-                  marginBottom: 20,
-                  lineHeight: 1.15,
-                  letterSpacing: '-0.03em',
-                }}
-              >
-                {isSuccess ? 'Your demo is ready' : 'Watch the voice agent'}
-                <span className="gradient-text" style={{ display: 'block' }}>
-                  {isSuccess ? 'View it now.' : 'in action.'}
-                </span>
-              </h2>
-              <p
-                className={`animate-in ${demoAnim.visible ? 'visible' : ''} animate-delay-1`}
-                style={{
-                  fontSize: 17,
-                  color: 'var(--slate)',
-                  lineHeight: 1.75,
-                  marginBottom: 32,
-                  maxWidth: 480,
-                }}
-              >
-                {isSuccess
-                  ? 'Access to your exclusive live demo has been unlocked. Our AI voice agent is ready to handle your incoming calls.'
-                  : 'See how it handles customer calls, answers FAQs, schedules appointments, and escalates complex issues — end-to-end.'
-                }
-              </p>
-
-              {isSuccess && (
-                <div
-                  className={`video-card animate-in ${demoAnim.visible ? 'visible' : ''} animate-delay-2`}
-                >
-                  <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'center', position: 'relative', zIndex: 1 }}>
-                    <div className="play-btn">
-                      <Play style={{ width: 28, height: 28, color: 'var(--white)', marginLeft: 3 }} />
-                    </div>
-                    <div style={{ fontSize: 14, color: 'var(--slate)', fontWeight: 500 }}>
-                      Demo Video — 4:12
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {!isSuccess && (
-                <div
-                  className={`animate-in ${demoAnim.visible ? 'visible' : ''} animate-delay-2`}
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(219, 234, 254, 0.3), rgba(209, 250, 229, 0.3))',
-                    borderRadius: 16,
-                    padding: 48,
-                    textAlign: 'center',
-                    border: '2px dashed rgba(0, 0, 0, 0.1)',
-                  }}
-                >
-                  <Sparkles style={{ width: 32, height: 32, color: 'var(--primary)', margin: '0 auto 16px' }} />
-                  <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--slate)', marginBottom: 8 }}>
-                    Demo video unlocks after registration
-                  </div>
-                  <div style={{ fontSize: 14, color: 'var(--slate-light)' }}>
-                    Fill out the form to watch the full live demo
-                  </div>
-                </div>
-              )}
-
-              {/* Trust signals */}
-              <div
-                className={`animate-in ${demoAnim.visible ? 'visible' : ''} animate-delay-3`}
-                style={{
-                  display: 'flex', gap: 24, marginTop: 28, flexWrap: 'wrap',
-                }}
-              >
-                {[
-                  { icon: <Shield style={{ width: 14, height: 14 }} />, text: 'SOC 2 Certified' },
-                  { icon: <Clock style={{ width: 14, height: 14 }} />, text: 'Setup in minutes' },
-                  { icon: <CheckCircle2 style={{ width: 14, height: 14 }} />, text: 'No credit card required' },
-                ].map((item, i) => (
-                  <div key={i} style={{
-                    display: 'flex', alignItems: 'center', gap: 6,
-                    fontSize: 13, color: 'var(--slate)', fontWeight: 500,
-                  }}>
-                    <span style={{ color: 'var(--primary)' }}>{item.icon}</span>
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 500, color: 'var(--slate)' }}>
+                    <item.Icon style={{ width: 16, height: 16, color: 'var(--primary)' }} />
                     {item.text}
                   </div>
                 ))}
               </div>
+
+              {/* Primary CTAs */}
+              <div
+                className={`animate-in ${heroAnim.visible ? 'visible' : ''} animate-delay-4`}
+                style={{ display: 'flex', gap: 12, alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap' }}
+              >
+                <button onClick={scrollToForm} className="btn-primary" style={{ border: 'none', cursor: 'pointer' }}>
+                  <span>Start Free Pilot</span>
+                  <ArrowRight style={{ width: 18, height: 18 }} />
+                </button>
+                <button onClick={scrollToForm} style={{
+                  border: '2px solid var(--primary)',
+                  background: 'transparent',
+                  color: 'var(--primary)',
+                  padding: '12px 28px',
+                  borderRadius: 10,
+                  fontWeight: 600,
+                  fontSize: 15,
+                  cursor: 'pointer',
+                  transition: 'all 0.3s',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'var(--primary)';
+                    e.currentTarget.style.color = 'white';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'transparent';
+                    e.currentTarget.style.color = 'var(--primary)';
+                  }}
+                >
+                  <span>Watch 2-Min Demo</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* ============ CLIENTS MARQUEE (Section 4) ============ */}
+          <div style={{ marginTop: 120, textAlign: 'center' }}>
+            <p className="mono" style={{
+              fontSize: 11, color: 'var(--slate-light)', letterSpacing: '0.08em', marginBottom: 32,
+              fontWeight: 500, textTransform: 'uppercase',
+            }}>
+              Trusted by teams at
+            </p>
+            <div
+              onMouseEnter={() => setIsMarqueeHovered(true)}
+              onMouseLeave={() => setIsMarqueeHovered(false)}
+              style={{
+                overflow: 'hidden',
+                position: 'relative',
+                background: 'rgba(59, 130, 246, 0.03)',
+                borderRadius: 16,
+                padding: '32px 0',
+              }}
+            >
+              <style>{`
+                @keyframes marquee {
+                  0% { transform: translateX(0); }
+                  100% { transform: translateX(-50%); }
+                }
+                .marquee-container {
+                  display: flex;
+                  gap: 64px;
+                  animation: marquee 30s linear infinite;
+                  will-change: transform;
+                }
+                .marquee-container.paused {
+                  animation-play-state: paused;
+                }
+              `}</style>
+              <div className={`marquee-container ${isMarqueeHovered ? 'paused' : ''}`}>
+                {[...clients, ...clients].map((client, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      cursor: 'pointer',
+                      transition: 'opacity 0.2s',
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.7')}
+                    onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
+                  >
+                    <img
+                      src={client.logo}
+                      alt={client.name}
+                      style={{
+                        height: 40,
+                        width: 'auto',
+                        maxWidth: 140,
+                        objectFit: 'contain',
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* ============ PLACEHOLDER SECTIONS ============ */}
+          {/* Section 5: Problems */}
+          <div style={{ marginTop: 120, textAlign: 'center', padding: '60px 0', borderTop: '1px solid #e2e8f0', opacity: 0.4 }}>
+            <h2 style={{ fontSize: 24, fontWeight: 700 }}>Section 5: Problem/Pain Points</h2>
+            <p style={{ color: 'var(--slate)' }}>3-column grid with pain points</p>
+          </div>
+
+          {/* Section 6: Use Cases */}
+          <div style={{ marginTop: 60, textAlign: 'center', padding: '60px 0', borderTop: '1px solid #e2e8f0', opacity: 0.4 }}>
+            <h2 style={{ fontSize: 24, fontWeight: 700 }}>Section 6: Use Case Tabs</h2>
+            <p style={{ color: 'var(--slate)' }}>4 tabs with field support, customer care, healthcare, internal SOP</p>
+          </div>
+
+          {/* Section 7: How It Works */}
+          <div style={{ marginTop: 60, textAlign: 'center', padding: '60px 0', borderTop: '1px solid #e2e8f0', opacity: 0.4 }}>
+            <h2 style={{ fontSize: 24, fontWeight: 700 }}>Section 7: How It Works</h2>
+            <p style={{ color: 'var(--slate)' }}>3-step timeline (Upload, Configure, Deploy)</p>
+          </div>
+
+          {/* Section 8: Testimonials */}
+          <div style={{ marginTop: 60, textAlign: 'center', padding: '60px 0', borderTop: '1px solid #e2e8f0', opacity: 0.4 }}>
+            <h2 style={{ fontSize: 24, fontWeight: 700 }}>Section 8: Testimonials</h2>
+            <p style={{ color: 'var(--slate)' }}>2-3 testimonial cards with metrics</p>
+          </div>
+
+          {/* Section 9: Comparison Table */}
+          <div style={{ marginTop: 60, textAlign: 'center', padding: '60px 0', borderTop: '1px solid #e2e8f0', opacity: 0.4 }}>
+            <h2 style={{ fontSize: 24, fontWeight: 700 }}>Section 9: Comparison Table</h2>
+            <p style={{ color: 'var(--slate)' }}>Voice RAG vs ChatGPT vs Knowledge Bases</p>
+          </div>
+
+          {/* Section 10: Form Section */}
+          <div
+            ref={formRef}
+            style={{ marginTop: 80, padding: '80px 0', borderTop: '1px solid #e2e8f0' }}
+          >
+            <div style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center', marginBottom: 48 }}>
+              <h2 style={{ fontSize: 42, fontWeight: 800, marginBottom: 16 }}>
+                Start Your Voice RAG Pilot
+              </h2>
+              <p style={{ fontSize: 16, color: 'var(--slate)', lineHeight: 1.6 }}>
+                Get sandbox access + 30-minute strategy call. No credit card required.
+              </p>
             </div>
 
-            {/* Right: Form Card */}
             <div
-              className={`form-card animate-in ${demoAnim.visible ? 'visible' : ''} animate-delay-1`}
+              className={`form-card`}
+              style={{ maxWidth: 500, margin: '0 auto' }}
             >
               {!isSuccess ? (
                 <>
                   <div className="form-header">
                     <div style={{ position: 'relative', zIndex: 1 }}>
                       <h3 style={{ fontSize: 20, fontWeight: 700, margin: 0, marginBottom: 6, color: 'var(--white)' }}>
-                        Request Demo
+                        Request Sandbox Access
                       </h3>
                       <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', margin: 0 }}>
-                        Get instant access to the live voice agent.
+                        Get instant live access to the voice RAG sandbox.
                       </p>
                     </div>
                   </div>
@@ -576,7 +721,7 @@ function App() {
 
                     {[
                       { label: 'FULL NAME', name: 'full_name', type: 'text', placeholder: 'John Smith' },
-                      { label: 'WORK EMAIL', name: 'work_email', type: 'email', placeholder: 'john@company.com' },
+                      { label: 'WORK EMAIL', name: 'work_email', type: 'email', placeholder: 'john@company.com', note: 'Work email only (not gmail, yahoo, outlook)' },
                       { label: 'JOB TITLE', name: 'job_title', type: 'text', placeholder: 'VP Support' },
                       { label: 'COMPANY', name: 'company_name', type: 'text', placeholder: 'Acme Corp' },
                     ].map(field => (
@@ -593,12 +738,17 @@ function App() {
                           required
                           placeholder={field.placeholder}
                         />
+                        {field.note && (
+                          <p style={{ fontSize: 11, color: 'var(--slate)', marginTop: 4, margin: 0 }}>
+                            {field.note}
+                          </p>
+                        )}
                       </div>
                     ))}
 
                     <div>
                       <label className="lbl" style={{ display: 'block', marginBottom: 6 }}>
-                        USE CASE <span style={{ color: 'var(--danger)' }}>*</span>
+                        TARGET USE CASE <span style={{ color: 'var(--danger)' }}>*</span>
                       </label>
                       <select
                         className="form-input"
@@ -609,11 +759,10 @@ function App() {
                         style={{ cursor: 'pointer' }}
                       >
                         <option value="">Select use case...</option>
-                        <option value="Customer Support">Customer Support</option>
-                        <option value="Sales Qualification">Sales Qualification</option>
-                        <option value="Billing">Billing</option>
-                        <option value="Scheduling">Scheduling</option>
-                        <option value="HR Services">HR Services</option>
+                        <option value="Field Support">Field Support</option>
+                        <option value="Healthcare">Healthcare</option>
+                        <option value="Customer Care">Customer Care</option>
+                        <option value="Internal SOP">Internal SOP</option>
                       </select>
                     </div>
 
@@ -621,14 +770,10 @@ function App() {
                       <label className="lbl" style={{ display: 'block', marginBottom: 6 }}>
                         PHONE <span style={{ color: 'var(--danger)' }}>*</span>
                       </label>
-                      <input
-                        className="form-input"
-                        type="tel"
-                        name="phone"
+                      <PhoneInputWrapper
                         value={formData.phone}
-                        onChange={handleInputChange}
+                        onChange={(phone: string) => setFormData(prev => ({ ...prev, phone }))}
                         required
-                        placeholder="+1 (555) 000-0000"
                       />
                     </div>
 
@@ -641,7 +786,7 @@ function App() {
                           </>
                         ) : (
                           <>
-                            Get Demo Access
+                            Unlock Live Demo & Pilot
                             <ChevronRight style={{ width: 18, height: 18 }} />
                           </>
                         )}
@@ -649,35 +794,63 @@ function App() {
                     </button>
 
                     <p style={{ fontSize: 11, color: 'var(--slate)', lineHeight: 1.5, margin: 0, textAlign: 'center' }}>
-                      No spam. One engineer reaches out within 24 hours.
+                      No spam. Engineer contacts you within 24 hours.
                     </p>
                   </form>
                 </>
               ) : (
                 <div style={{
-                  padding: '48px 32px',
-                  textAlign: 'center',
-                  display: 'grid',
-                  gap: 16,
+                  position: 'relative',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 12,
                   animation: 'fade-in-up 0.5s ease-out',
                 }}>
                   <div style={{
-                    width: 64, height: 64, borderRadius: '50%',
-                    background: '#D1FAE5',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    margin: '0 auto',
+                    textAlign: 'center',
+                    padding: '16px 0',
                   }}>
-                    <CheckCircle2 style={{ width: 32, height: 32, color: 'var(--success)' }} />
+                    <div style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: 48, height: 48, borderRadius: '50%',
+                      background: '#D1FAE5',
+                      marginBottom: 12,
+                    }}>
+                      <CheckCircle2 style={{ width: 24, height: 24, color: 'var(--success)' }} />
+                    </div>
+                    <h3 style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)', margin: '0 0 6px 0' }}>
+                      Sandbox Access Unlocked
+                    </h3>
+                    <p style={{ fontSize: 13, color: 'var(--slate)', margin: '0 0 16px 0' }}>
+                      Your live demo is ready to view below.
+                    </p>
                   </div>
-                  <h3 style={{ fontSize: 22, fontWeight: 700, color: 'var(--ink)', margin: 0 }}>
-                    Demo Unlocked
-                  </h3>
-                  <p style={{ fontSize: 15, color: 'var(--slate)', margin: 0, lineHeight: 1.6 }}>
-                    Our team will contact you within 24 hours.<br />Check your email for next steps.
-                  </p>
+
+                  <video
+                    controls
+                    controlsList="nodownload"
+                    autoPlay
+                    style={{
+                      width: '100%',
+                      borderRadius: 12,
+                      background: '#000',
+                      aspectRatio: '16 / 9',
+                    }}
+                  >
+                    <source src="/asset/Voice Agent_New - Trim.mp4" type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
                 </div>
               )}
             </div>
+          </div>
+
+          {/* Section 11: FAQ Accordion */}
+          <div style={{ marginTop: 60, textAlign: 'center', padding: '60px 0', borderTop: '1px solid #e2e8f0', opacity: 0.4 }}>
+            <h2 style={{ fontSize: 24, fontWeight: 700 }}>Section 11: FAQ Accordion</h2>
+            <p style={{ color: 'var(--slate)' }}>6 common objection questions</p>
           </div>
         </div>
       </section>
@@ -686,10 +859,9 @@ function App() {
       <footer className="site-footer" style={{ padding: '64px 0 32px' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
           <div
-            className="footer-grid"
             style={{
               display: 'grid',
-              gridTemplateColumns: '2fr 1fr 1fr',
+              gridTemplateColumns: '1fr 1fr 1fr',
               gap: 48,
               marginBottom: 40,
             }}
@@ -700,12 +872,12 @@ function App() {
                 <div>
                   <div style={{ fontWeight: 800, color: 'var(--white)', fontSize: 18 }}>Adople AI</div>
                   <div className="mono" style={{ fontSize: 8, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.08em' }}>
-                    VOICE AGENT PLATFORM
+                    VOICE RAG PLATFORM
                   </div>
                 </div>
               </div>
               <p style={{ fontSize: 14, lineHeight: 1.7, maxWidth: 360 }}>
-                Enterprise-grade AI voice agents that deflect calls, handle support, and scale your business.
+                Turn any document into an interactive voice expert. Zero hallucinations, complete data sovereignty, instant deployment.
               </p>
             </div>
 
@@ -717,7 +889,7 @@ function App() {
                 Product
               </h4>
               <ul style={{ listStyle: 'none', display: 'grid', gap: 12, fontSize: 14 }}>
-                <li><a href="#demo">Request Demo</a></li>
+                <li><a href="#" style={{ cursor: 'pointer' }} onClick={scrollToForm}>View Demo</a></li>
                 <li><a href="#features">Features</a></li>
                 <li><a href="#">Pricing</a></li>
               </ul>
@@ -747,16 +919,24 @@ function App() {
             flexWrap: 'wrap',
             fontSize: 13,
             color: 'rgba(255,255,255,0.3)',
+            alignItems: 'center',
           }}>
-            <span>&copy; 2026 Adople AI. All rights reserved.</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span>&copy; 2026 Adople AI. All rights reserved.</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Lock style={{ width: 12, height: 12 }} />
+                Zero third-party LLM training. Full data sovereignty.
+              </span>
+            </div>
             <div style={{ display: 'flex', gap: 20 }}>
-              <a href="#" style={{ color: 'rgba(255,255,255,0.3)' }}>Privacy</a>
-              <a href="#" style={{ color: 'rgba(255,255,255,0.3)' }}>Terms</a>
-              <a href="#" style={{ color: 'rgba(255,255,255,0.3)' }}>Security</a>
+              <a href="#" style={{ color: 'rgba(255,255,255,0.3)' }}>Privacy Policy</a>
+              <a href="#" style={{ color: 'rgba(255,255,255,0.3)' }}>Terms of Service</a>
+              <a href="#" style={{ color: 'rgba(255,255,255,0.3)' }}>Contact Us</a>
             </div>
           </div>
         </div>
       </footer>
+
     </div>
   );
 }
