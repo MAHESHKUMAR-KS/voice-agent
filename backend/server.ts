@@ -9,14 +9,23 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = 5000;
+const PORT = parseInt(process.env.PORT || '9045', 10);
+const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:3000';
+const NODE_ENV = process.env.NODE_ENV || 'development';
 
 // Middleware
-app.use(cors());
+app.use(cors({ origin: CORS_ORIGIN }));
 app.use(express.json());
 
-// Database file path
-const DB_FILE = path.join(__dirname, 'voice_leads.db');
+// Serve static files from frontend dist in production
+if (NODE_ENV === 'production') {
+  const frontendPath = path.join(__dirname, '../frontend/dist');
+  app.use(express.static(frontendPath));
+}
+
+// Database file path - use /app/data if in Docker, otherwise current directory
+const dataDir = process.env.DATA_DIR || __dirname;
+const DB_FILE = path.join(dataDir, 'voice_leads.db');
 
 // Lead interface
 interface Lead {
@@ -187,11 +196,25 @@ app.get('/health', (req: Request, res: Response) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
+// SPA catch-all route (serve index.html for all non-API routes in production)
+if (NODE_ENV === 'production') {
+  app.get('*', (req: Request, res: Response) => {
+    const indexPath = path.join(__dirname, '../frontend/dist/index.html');
+    if (existsSync(indexPath)) {
+      res.sendFile(indexPath);
+    } else {
+      res.status(404).json({ error: 'Frontend not found. Build frontend with: npm run build' });
+    }
+  });
+}
+
 // Start server
 initDatabase().then(() => {
   app.listen(PORT, () => {
     console.log(`🚀 Backend server running on http://localhost:${PORT}`);
-    console.log(`📊 Database: voice_leads.db (Work email validated)`);
+    console.log(`📊 Database: ${DB_FILE}`);
+    console.log(`🌍 Environment: ${NODE_ENV}`);
+    console.log(`🔒 CORS Origin: ${CORS_ORIGIN}`);
   });
 }).catch((error) => {
   console.error('❌ Failed to initialize database:', error);
