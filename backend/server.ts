@@ -26,6 +26,7 @@ interface Lead {
   job_title: string;
   company_name: string;
   use_case: string;
+  other_use_case: string;
   phone: string;
   created_at: string;
 }
@@ -33,6 +34,20 @@ interface Lead {
 interface Database {
   leads: Lead[];
   lastId: number;
+}
+
+// Personal email domains to reject
+const PERSONAL_EMAIL_DOMAINS = [
+  'gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'aol.com',
+  'protonmail.com', 'mail.com', 'yandex.com', 'inbox.com', 'icloud.com',
+  'fastmail.com', 'tutanota.com', '163.com', 'qq.com', 'sina.com'
+];
+
+// Check if email is a work email
+function isWorkEmail(email: string): boolean {
+  const domain = email.split('@')[1]?.toLowerCase();
+  if (!domain) return false;
+  return !PERSONAL_EMAIL_DOMAINS.includes(domain);
 }
 
 // Initialize database file
@@ -67,18 +82,46 @@ interface LeadData {
   job_title: string;
   company_name: string;
   use_case: string;
+  other_use_case: string;
   phone: string;
 }
 
 app.post('/api/leads', async (req: Request, res: Response) => {
   try {
-    const { full_name, work_email, job_title, company_name, use_case, phone }: LeadData = req.body;
+    const { full_name, work_email, job_title, company_name, use_case, other_use_case, phone }: LeadData = req.body;
 
     // Validate required fields
     if (!full_name || !work_email || !job_title || !company_name || !use_case || !phone) {
       return res.status(400).json({
         success: false,
         message: 'All fields are required'
+      });
+    }
+
+    // If use_case is "Other", validate other_use_case is provided
+    if (use_case === 'Other' && !other_use_case) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please specify your use case'
+      });
+    }
+
+    const trimmedEmail = work_email.trim().toLowerCase();
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(trimmedEmail)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid email format'
+      });
+    }
+
+    // Validate work email (reject personal emails)
+    if (!isWorkEmail(trimmedEmail)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please use a work email address, not a personal email (gmail, yahoo, outlook, etc.)'
       });
     }
 
@@ -89,10 +132,11 @@ app.post('/api/leads', async (req: Request, res: Response) => {
     const newLead: Lead = {
       id: db.lastId + 1,
       full_name,
-      work_email,
+      work_email: trimmedEmail,
       job_title,
       company_name,
       use_case,
+      other_use_case: use_case === 'Other' ? other_use_case : '',
       phone,
       created_at: new Date().toISOString()
     };
@@ -104,7 +148,7 @@ app.post('/api/leads', async (req: Request, res: Response) => {
     // Save database
     await writeDatabase(db);
 
-    console.log(`✅ New lead captured: ${full_name} (${work_email}) - ${company_name}`);
+    console.log(`✅ New lead captured: ${full_name} (${trimmedEmail}) - ${company_name} - ${phone}`);
 
     res.status(201).json({
       success: true,
@@ -147,7 +191,7 @@ app.get('/health', (req: Request, res: Response) => {
 initDatabase().then(() => {
   app.listen(PORT, () => {
     console.log(`🚀 Backend server running on http://localhost:${PORT}`);
-    console.log(`📊 Database: voice_leads.db`);
+    console.log(`📊 Database: voice_leads.db (Work email validated)`);
   });
 }).catch((error) => {
   console.error('❌ Failed to initialize database:', error);

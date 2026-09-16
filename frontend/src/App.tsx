@@ -60,6 +60,7 @@ interface FormData {
   job_title: string;
   company_name: string;
   use_case: string;
+  other_use_case: string;
   phone: string;
 }
 
@@ -332,6 +333,7 @@ function App() {
     job_title: '',
     company_name: '',
     use_case: '',
+    other_use_case: '',
     phone: ''
   });
 
@@ -447,19 +449,6 @@ function App() {
         </div>
       </header>
 
-      {/* ============ ALERT BANNER ============ */}
-      <div style={{
-        background: '#EFF6FF',
-        borderBottom: '1px solid #DBEAFE',
-        padding: '14px 0',
-        textAlign: 'center',
-        fontSize: 14,
-        color: 'var(--primary)',
-        fontWeight: 500,
-      }}>
-        <Zap style={{ width: 14, height: 14, display: 'inline-block', marginRight: 6, marginBottom: -2 }} />
-        Live Voice RAG Sandbox — Upload any PDF and start talking in seconds.
-      </div>
 
       {/* ============ HERO SECTION ============ */}
       <section className="hero-section" style={{ padding: '100px 0 80px' }} id="hero">
@@ -504,10 +493,10 @@ function App() {
                 style={{
                   fontSize: 64,
                   fontWeight: 900,
-                  lineHeight: 1.1,
+                  lineHeight: 1.2,
                   marginBottom: 24,
                   letterSpacing: '-0.03em',
-                  maxWidth: 900,
+                  maxWidth: 1000,
                   margin: '0 auto 24px',
                 }}
               >
@@ -702,39 +691,42 @@ function App() {
                         fontSize: 13,
                         padding: 12,
                         borderRadius: 10,
+                        gridColumn: '1 / -1',
                       }}>
                         {error}
                       </div>
                     )}
 
-                    {[
-                      { label: 'FULL NAME', name: 'full_name', type: 'text', placeholder: 'John Smith' },
-                      { label: 'WORK EMAIL', name: 'work_email', type: 'email', placeholder: 'john@company.com', note: 'Work email only (not gmail, yahoo, outlook)' },
-                      { label: 'JOB TITLE', name: 'job_title', type: 'text', placeholder: 'VP Support' },
-                      { label: 'COMPANY', name: 'company_name', type: 'text', placeholder: 'Acme Corp' },
-                    ].map(field => (
-                      <div key={field.name}>
-                        <label className="lbl" style={{ display: 'block', marginBottom: 6 }}>
-                          {field.label} <span style={{ color: 'var(--danger)' }}>*</span>
-                        </label>
-                        <input
-                          className="form-input"
-                          type={field.type}
-                          name={field.name}
-                          value={formData[field.name as keyof FormData]}
-                          onChange={handleInputChange}
-                          required
-                          placeholder={field.placeholder}
-                        />
-                        {field.note && (
-                          <p style={{ fontSize: 11, color: 'var(--slate)', marginTop: 4, margin: 0 }}>
-                            {field.note}
-                          </p>
-                        )}
-                      </div>
-                    ))}
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, gridColumn: '1 / -1' }}>
+                      {[
+                        { label: 'FULL NAME', name: 'full_name', type: 'text', placeholder: 'John Smith' },
+                        { label: 'JOB TITLE', name: 'job_title', type: 'text', placeholder: 'VP Support' },
+                        { label: 'WORK EMAIL', name: 'work_email', type: 'email', placeholder: 'john@company.com', note: 'Work email only (not gmail, yahoo, outlook)' },
+                        { label: 'COMPANY', name: 'company_name', type: 'text', placeholder: 'Acme Corp' },
+                      ].map(field => (
+                        <div key={field.name}>
+                          <label className="lbl" style={{ display: 'block', marginBottom: 6 }}>
+                            {field.label} <span style={{ color: 'var(--danger)' }}>*</span>
+                          </label>
+                          <input
+                            className="form-input"
+                            type={field.type}
+                            name={field.name}
+                            value={formData[field.name as keyof FormData]}
+                            onChange={handleInputChange}
+                            required
+                            placeholder={field.placeholder}
+                          />
+                          {field.note && (
+                            <p style={{ fontSize: 11, color: 'var(--slate)', marginTop: 4, margin: 0 }}>
+                              {field.note}
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
 
-                    <div>
+                    <div style={{ gridColumn: '1 / -1' }}>
                       <label className="lbl" style={{ display: 'block', marginBottom: 6 }}>
                         TARGET USE CASE <span style={{ color: 'var(--danger)' }}>*</span>
                       </label>
@@ -751,10 +743,28 @@ function App() {
                         <option value="Healthcare">Healthcare</option>
                         <option value="Customer Care">Customer Care</option>
                         <option value="Internal SOP">Internal SOP</option>
+                        <option value="Other">Other</option>
                       </select>
                     </div>
 
-                    <div>
+                    {formData.use_case === 'Other' && (
+                      <div style={{ gridColumn: '1 / -1' }}>
+                        <label className="lbl" style={{ display: 'block', marginBottom: 6 }}>
+                          PLEASE SPECIFY <span style={{ color: 'var(--danger)' }}>*</span>
+                        </label>
+                        <input
+                          className="form-input"
+                          type="text"
+                          name="other_use_case"
+                          value={formData.other_use_case}
+                          onChange={handleInputChange}
+                          required={formData.use_case === 'Other'}
+                          placeholder="Describe your use case..."
+                        />
+                      </div>
+                    )}
+
+                    <div style={{ gridColumn: '1 / -1' }}>
                       <label className="lbl" style={{ display: 'block', marginBottom: 6 }}>
                         PHONE <span style={{ color: 'var(--danger)' }}>*</span>
                       </label>
@@ -765,7 +775,7 @@ function App() {
                       />
                     </div>
 
-                    <button type="submit" disabled={isSubmitting} className="form-submit" style={{ marginTop: 4 }}>
+                    <button type="submit" disabled={isSubmitting} className="form-submit" style={{ marginTop: 4, gridColumn: '1 / -1' }}>
                       <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
                         {isSubmitting ? (
                           <>
@@ -781,7 +791,7 @@ function App() {
                       </span>
                     </button>
 
-                    <p style={{ fontSize: 11, color: 'var(--slate)', lineHeight: 1.5, margin: 0, textAlign: 'center' }}>
+                    <p style={{ fontSize: 11, color: 'var(--slate)', lineHeight: 1.5, margin: 0, textAlign: 'center', gridColumn: '1 / -1' }}>
                       No spam. Engineer contacts you within 24 hours.
                     </p>
                   </form>
