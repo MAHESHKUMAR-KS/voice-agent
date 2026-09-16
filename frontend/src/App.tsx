@@ -463,8 +463,10 @@ function App() {
                   letterSpacing: '-0.03em',
                 }}
               >
-                Watch the voice agent
-                <span className="gradient-text" style={{ display: 'block' }}>in action.</span>
+                {isSuccess ? 'Your demo is ready' : 'Watch the voice agent'}
+                <span className="gradient-text" style={{ display: 'block' }}>
+                  {isSuccess ? 'View it now.' : 'in action.'}
+                </span>
               </h2>
               <p
                 className={`animate-in ${demoAnim.visible ? 'visible' : ''} animate-delay-1`}
@@ -476,21 +478,47 @@ function App() {
                   maxWidth: 480,
                 }}
               >
-                See how it handles customer calls, answers FAQs, schedules appointments, and escalates complex issues — end-to-end.
+                {isSuccess
+                  ? 'Access to your exclusive live demo has been unlocked. Our AI voice agent is ready to handle your incoming calls.'
+                  : 'See how it handles customer calls, answers FAQs, schedules appointments, and escalates complex issues — end-to-end.'
+                }
               </p>
 
-              <div
-                className={`video-card animate-in ${demoAnim.visible ? 'visible' : ''} animate-delay-2`}
-              >
-                <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'center', position: 'relative', zIndex: 1 }}>
-                  <div className="play-btn">
-                    <Play style={{ width: 28, height: 28, color: 'var(--white)', marginLeft: 3 }} />
-                  </div>
-                  <div style={{ fontSize: 14, color: 'var(--slate)', fontWeight: 500 }}>
-                    Demo Video — 4:12
+              {isSuccess && (
+                <div
+                  className={`video-card animate-in ${demoAnim.visible ? 'visible' : ''} animate-delay-2`}
+                >
+                  <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'center', position: 'relative', zIndex: 1 }}>
+                    <div className="play-btn">
+                      <Play style={{ width: 28, height: 28, color: 'var(--white)', marginLeft: 3 }} />
+                    </div>
+                    <div style={{ fontSize: 14, color: 'var(--slate)', fontWeight: 500 }}>
+                      Demo Video — 4:12
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
+
+              {!isSuccess && (
+                <div
+                  className={`animate-in ${demoAnim.visible ? 'visible' : ''} animate-delay-2`}
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(219, 234, 254, 0.3), rgba(209, 250, 229, 0.3))',
+                    borderRadius: 16,
+                    padding: 48,
+                    textAlign: 'center',
+                    border: '2px dashed rgba(0, 0, 0, 0.1)',
+                  }}
+                >
+                  <Sparkles style={{ width: 32, height: 32, color: 'var(--primary)', margin: '0 auto 16px' }} />
+                  <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--slate)', marginBottom: 8 }}>
+                    Demo video unlocks after registration
+                  </div>
+                  <div style={{ fontSize: 14, color: 'var(--slate-light)' }}>
+                    Fill out the form to watch the full live demo
+                  </div>
+                </div>
+              )}
 
               {/* Trust signals */}
               <div

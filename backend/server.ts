@@ -15,8 +15,8 @@ const PORT = 5000;
 app.use(cors());
 app.use(express.json());
 
-// JSON Database file path
-const DB_FILE = path.join(__dirname, 'voice_leads.json');
+// Database file path
+const DB_FILE = path.join(__dirname, 'voice_leads.db');
 
 // Lead interface
 interface Lead {
@@ -35,17 +35,17 @@ interface Database {
   lastId: number;
 }
 
-// Initialize JSON database
+// Initialize database file
 async function initDatabase(): Promise<Database> {
   if (!existsSync(DB_FILE)) {
     const initialData: Database = { leads: [], lastId: 0 };
     await fs.writeFile(DB_FILE, JSON.stringify(initialData, null, 2));
-    console.log('✅ Database initialized: voice_leads.json');
+    console.log('✅ Database initialized: voice_leads.db');
     return initialData;
   }
 
   const data = await fs.readFile(DB_FILE, 'utf-8');
-  console.log('✅ Database loaded: voice_leads.json');
+  console.log('✅ Database loaded: voice_leads.db');
   return JSON.parse(data);
 }
 
@@ -147,7 +147,7 @@ app.get('/health', (req: Request, res: Response) => {
 initDatabase().then(() => {
   app.listen(PORT, () => {
     console.log(`🚀 Backend server running on http://localhost:${PORT}`);
-    console.log(`📊 Database: voice_leads.json`);
+    console.log(`📊 Database: voice_leads.db`);
   });
 }).catch((error) => {
   console.error('❌ Failed to initialize database:', error);
