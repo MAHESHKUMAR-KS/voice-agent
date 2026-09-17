@@ -8,12 +8,12 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=9045
-      - CORS_ORIGIN=http://localhost:9045
+      - CORS_ORIGIN=http://localhost:9040
     volumes:
       - ./data:/app/data
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:5000/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"]
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:9045/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"]
       interval: 30s
       timeout: 10s
       retries: 3

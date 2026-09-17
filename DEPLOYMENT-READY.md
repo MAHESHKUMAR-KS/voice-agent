@@ -109,7 +109,7 @@ voice-rag-funnel/
 - **Commands:**
   ```bash
   docker build -t voice-rag .
-  docker run -p 5000:5000 voice-rag
+  docker run -p 9045:9045 voice-rag
   ```
 
 ### 🥉 **Vercel + Railway** - ADVANCED
