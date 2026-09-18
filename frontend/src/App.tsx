@@ -127,8 +127,15 @@ function PhoneInputWrapper({ value, onChange, required }: PhoneInputProps) {
   const phoneNumber = value.replace(/^\+\d+/, '').trim();
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const phoneOnly = e.target.value.replace(/\D/g, '');
+    const inputValue = e.target.value;
+    const phoneOnly = inputValue.replace(/\D/g, '');
     onChange(selectedCountry.dial + phoneOnly);
+  };
+
+  const handlePhoneInputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (!e.target.value) {
+      onChange(selectedCountry.dial);
+    }
   };
 
   return (
@@ -308,6 +315,7 @@ function PhoneInputWrapper({ value, onChange, required }: PhoneInputProps) {
         type="tel"
         value={phoneNumber}
         onChange={handlePhoneChange}
+        onFocus={handlePhoneInputFocus}
         required={required}
         placeholder="081234 56789"
         style={{
@@ -371,8 +379,12 @@ function App() {
     setError('');
 
     try {
-      const apiKey = (window as any).FUNNEL_API_KEY || 'sk_live_voiceagen_5c0e8f57954825660d9480fecd85bb4ac045d14a659e064c';
-      const response = await fetch('http://localhost:9000/api/ingest/leads', {
+      const apiKey = import.meta.env.VITE_FUNNEL_API_KEY;
+      if (!apiKey) {
+        throw new Error('API key not configured. Please check .env file.');
+      }
+
+      const response = await fetch('http://localhost:9045/api/leads', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
