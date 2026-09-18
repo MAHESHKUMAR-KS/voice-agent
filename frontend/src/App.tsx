@@ -372,7 +372,7 @@ function App() {
 
     try {
       const apiKey = (window as any).FUNNEL_API_KEY || 'sk_live_voiceagen_5c0e8f57954825660d9480fecd85bb4ac045d14a659e064c';
-      const response = await fetch('http://localhost:9045/api/ingest/leads', {
+      const response = await fetch('http://localhost:9000/api/ingest/leads', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
