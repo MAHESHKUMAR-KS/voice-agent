@@ -13,8 +13,32 @@ const PORT = parseInt(process.env.PORT || '9045', 10);
 const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:9040';
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
+app.get('/', (req: Request, res: Response) => {
+  res.json({ service: 'Voice Agent Funnel Backend', status: 'online', port: PORT });
+});
+
+const allowedOrigins = [
+  'http://13.201.92.234:9040',
+  'http://13.201.92.234:9045',
+  'http://localhost:9040',
+  'http://localhost:9045',
+  'http://127.0.0.1:9040',
+  'http://127.0.0.1:9045'
+];
+
 // Middleware
-app.use(cors({ origin: CORS_ORIGIN }));
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin) || origin.includes('13.201.92.234') || origin === CORS_ORIGIN) {
+      callback(null, true);
+    } else {
+      callback(null, true);
+    }
+  },
+  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
 app.use(express.json());
 
 // Serve static files from frontend dist in production

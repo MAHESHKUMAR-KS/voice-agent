@@ -1,37 +1,75 @@
+# Process IDs & Deployment Runtime Logs
+*.pid
+backend.pid
+frontend.pid
+*.log
+backend.log
+frontend.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
 # Dependencies
 node_modules/
-package-lock.json
+**/node_modules/
+package-lock.json.bak
 
-# Build outputs
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+ENV/
+
+# Build & Bundler Outputs
 dist/
+dist-ssr/
 build/
+**/dist/
+**/build/
+*.tsbuildinfo
+.vite/
+.cache/
+.temp/
+.parcel-cache/
 
-# Database
-*.db
-*.sqlite
-backend/voice_leads.json
-
-# Environment
+# Environment Secrets & Local Configurations
 .env
-.env.local
+.env.*
+!.env.example
 
-# IDE
-.vscode/
+# Local Databases & Lead Data
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+leads.db
+voice_leads.json
+
+# IDEs & Editors
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
 .idea/
 *.swp
 *.swo
+*~
+*.suo
+*.sln
 
-# OS
+# OS Generated Files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
-
-# Logs
-*.log
-npm-debug.log*
-
-# Vite
-frontend/dist/
-
-# Documentation (exclude all .md except README.md)
-*.md
-!README.md
+desktop.ini

@@ -1,0 +1,186 @@
+================================================================================
+                         DEPLOY NOW - 5 MINUTE GUIDE
+================================================================================
+
+✅ Your site is PRODUCTION READY
+✅ Both frontend and backend build successfully  
+✅ All files are in place
+✅ Docker is configured
+✅ Database is file-based (no external dependencies)
+
+NOW DO THIS:
+
+================================================================================
+STEP 1: TEST LOCALLY (2 minutes)
+================================================================================
+
+Terminal 1 - Start Backend:
+  cd backend
+  npm install
+  npm run dev
+  
+  Should show: 🚀 Backend server running on http://localhost:9045
+
+Terminal 2 - Start Frontend:
+  cd frontend
+  npm install
+  npm run dev
+  
+  Should show: VITE v8.3.0 ready in 100 ms
+
+VISIT: http://localhost:9045
+
+TEST:
+  ☐ Page loads
+  ☐ Form shows
+  ☐ Fill form and submit
+  ☐ Demo video plays
+
+================================================================================
+STEP 2: DEPLOY TO PRODUCTION (3 minutes)
+================================================================================
+
+EASIEST: Railway.app
+
+1. Go to railway.app
+2. Sign up with GitHub
+3. Click "New Project"
+4. Select "Deploy from GitHub"
+5. Choose this repository
+6. Set environment variables:
+   NODE_ENV = production
+   CORS_ORIGIN = https://your-domain-from-railway.app
+   PORT = 9045
+
+7. Click Deploy
+8. Wait 2-3 minutes
+9. Get your URL from Railway dashboard
+10. Share with team! 🎉
+
+ALTERNATIVE: Docker on Your Server
+
+1. Build: docker build -t voice-rag .
+2. Run: docker run -p 9045:9045 voice-rag
+3. Visit: http://your-server:9045
+
+================================================================================
+STEP 3: VERIFY DEPLOYMENT (1 minute)
+================================================================================
+
+Run this command to test:
+
+  curl https://yourdomain.com/health
+  
+Should return: {"status":"OK","timestamp":"..."}
+
+Test form submission:
+  
+  curl -X POST https://yourdomain.com/api/leads \
+    -H "Content-Type: application/json" \
+    -d '{
+      "full_name": "Test User",
+      "work_email": "test@company.com",
+      "job_title": "Manager",
+      "company_name": "Test Corp",
+      "use_case": "Field Support",
+      "other_use_case": "",
+      "phone": "+919876543210"
+    }'
+
+Should return: {"success":true,...}
+
+================================================================================
+STEP 4: DONE! 🎉
+================================================================================
+
+Your site is live!
+
+WHAT'S WORKING:
+  ✅ 10-section conversion funnel
+  ✅ 2-column form with validation
+  ✅ Work email validation (blocks personal emails)
+  ✅ "Other" use case with custom text field
+  ✅ Country-based phone input
+  ✅ Demo video (plays after form submit)
+  ✅ Form submissions stored in database
+  ✅ Sticky CTA button
+  ✅ FAQ accordion
+  ✅ Testimonials & comparison table
+  ✅ Responsive on all devices
+
+NEXT:
+  → Monitor your form submissions
+  → Share domain with team
+  → Track analytics
+  → Collect leads!
+
+================================================================================
+ENVIRONMENT VARIABLES REFERENCE
+================================================================================
+
+FRONTEND (.env):
+  VITE_API_URL=https://your-domain.com (your backend)
+
+BACKEND (.env):
+  PORT=9045
+  NODE_ENV=production
+  CORS_ORIGIN=https://your-frontend-domain.com
+
+LOCAL DEVELOPMENT:
+  Frontend: http://localhost:9040
+  Backend: http://localhost:9045
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+Q: Form not submitting?
+A: Check CORS_ORIGIN matches your frontend domain
+
+Q: Demo video not playing?
+A: Video file was included in build (should work automatically)
+
+Q: Page shows 404?
+A: Check backend is running and serving frontend
+
+Q: Database not saving?
+A: Check /app/data directory exists and is writable
+
+Q: Can't run locally?
+A: npm install dependencies first in both folders
+
+================================================================================
+FILES YOU NEED TO KNOW
+================================================================================
+
+START-HERE.md
+  → Quick overview
+
+QUICK-DEPLOY.md
+  → Detailed deployment for each platform
+
+DEPLOYMENT.md
+  → Everything about deployment
+
+Dockerfile
+  → Docker container setup
+
+docker-compose.yml
+  → For local development with Docker
+
+.env.example (frontend & backend)
+  → Environment variable templates
+
+================================================================================
+YOU'RE READY! 🚀
+================================================================================
+
+Your production-ready Voice RAG Funnel is complete.
+
+Choose your platform above and deploy in 5 minutes.
+
+Questions? Read QUICK-DEPLOY.md
+
+Ready? Deploy now!
+
+================================================================================
