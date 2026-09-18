@@ -371,17 +371,27 @@ function App() {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:9045/api/leads', {
+      const apiKey = (window as any).FUNNEL_API_KEY || 'sk_live_voiceagen_5c0e8f57954825660d9480fecd85bb4ac045d14a659e064c';
+      const response = await fetch('http://localhost:9045/api/ingest/leads', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-Key': apiKey
+        },
+        body: JSON.stringify({
+          full_name: formData.full_name,
+          email: formData.work_email,
+          phone: formData.phone,
+          company: formData.company_name,
+          job_title: formData.job_title
+        })
       });
 
       const data = await response.json();
       if (response.ok) {
         setIsSuccess(true);
       } else {
-        setError(data.message || 'Failed to submit. Please try again.');
+        setError(data.message || data.error || 'Failed to submit. Please try again.');
       }
     } catch {
       setError('Network error. Backend may not be running.');
