@@ -379,11 +379,15 @@ function App() {
           'X-API-Key': apiKey
         },
         body: JSON.stringify({
+          funnel_id: "voice_agent",
+          funnel_source: "Voice Agent",
           full_name: formData.full_name,
           email: formData.work_email,
           phone: formData.phone,
           company: formData.company_name,
-          job_title: formData.job_title
+          job_title: formData.job_title,
+          use_case: formData.use_case || "",
+          message: formData.other_use_case || ""
         })
       });
 
