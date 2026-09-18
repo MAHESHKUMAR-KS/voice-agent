@@ -60,7 +60,7 @@ app.use(cors({
     }
   },
   methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-API-Key'],
   credentials: true
 }));
 app.use(express.json());
@@ -126,31 +126,41 @@ function isWorkEmail(email: string): boolean {
   return !PERSONAL_EMAIL_DOMAINS.includes(domain);
 }
 
-// Initialize database schema
+// Initialize database schema (Centralized leads table)
 async function initDatabaseSchema(): Promise<void> {
   try {
-    const schemaSQL = `
-      CREATE TABLE IF NOT EXISTS voice_agent_leads (
+    // Create centralized leads table
+    const createTableSQL = `
+      CREATE TABLE IF NOT EXISTS leads (
         id SERIAL PRIMARY KEY,
-        funnel_id VARCHAR(100) DEFAULT 'voice-agent',
-        funnel_source VARCHAR(100) DEFAULT 'voice-form',
+        funnel_id VARCHAR(100) NOT NULL,
+        funnel_source VARCHAR(100) NOT NULL,
         full_name VARCHAR(255) NOT NULL,
-        work_email VARCHAR(255) NOT NULL,
-        job_title VARCHAR(255),
-        company_name VARCHAR(255),
-        use_case VARCHAR(255),
-        other_use_case TEXT,
+        email VARCHAR(255) NOT NULL,
         phone VARCHAR(50),
+        company VARCHAR(255),
+        job_title VARCHAR(255),
+        use_case TEXT,
+        message TEXT,
+        campaign VARCHAR(255),
+        status VARCHAR(50) DEFAULT 'New',
+        source_url TEXT,
+        ip_address VARCHAR(45),
         created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
-      );
-
-      CREATE INDEX IF NOT EXISTS idx_voice_agent_leads_email ON voice_agent_leads(work_email);
-      CREATE INDEX IF NOT EXISTS idx_voice_agent_leads_created_at ON voice_agent_leads(created_at);
-      CREATE INDEX IF NOT EXISTS idx_voice_agent_leads_company ON voice_agent_leads(company_name);
+        updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+        raw_payload JSONB DEFAULT '{}'::jsonb
+      )
     `;
+    await pool.query(createTableSQL);
+    console.log('✅ Centralized leads table created or verified.');
 
-    await pool.query(schemaSQL);
+    // Create indexes separately
+    await pool.query(`CREATE INDEX IF NOT EXISTS idx_leads_funnel_id ON leads(funnel_id)`);
+    await pool.query(`CREATE INDEX IF NOT EXISTS idx_leads_email ON leads(email)`);
+    await pool.query(`CREATE INDEX IF NOT EXISTS idx_leads_status ON leads(status)`);
+    await pool.query(`CREATE INDEX IF NOT EXISTS idx_leads_created_at ON leads(created_at)`);
+    await pool.query(`CREATE INDEX IF NOT EXISTS idx_leads_company ON leads(company)`);
+
     console.log('✅ Database schema verified and initialized.');
   } catch (err) {
     console.error('❌ Error executing database schema:', err);
@@ -207,25 +217,29 @@ app.post('/api/leads', async (req: Request, res: Response) => {
       });
     }
 
-    // Insert into PostgreSQL
+    // Insert into centralized PostgreSQL leads table
     const sql = `
-      INSERT INTO voice_agent_leads (
-        funnel_id, funnel_source, full_name, work_email, job_title,
-        company_name, use_case, other_use_case, phone
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-      RETURNING id, created_at
+      INSERT INTO leads (
+        funnel_id, funnel_source, full_name, email, phone, company,
+        job_title, use_case, message, status, ip_address, raw_payload
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+      RETURNING *
     `;
 
+    const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || null;
     const result = await pool.query(sql, [
-      'voice-agent',
-      'voice-form',
+      'voice_agent',
+      'voice-agent-funnel',
       full_name.trim(),
       trimmedEmail,
-      job_title.trim(),
+      phone.trim(),
       company_name.trim(),
+      job_title.trim(),
       use_case,
       use_case === 'Other' ? other_use_case : '',
-      phone.trim()
+      'New',
+      clientIp,
+      JSON.stringify(req.body)
     ]);
 
     const leadId = result.rows[0].id;
@@ -246,11 +260,12 @@ app.post('/api/leads', async (req: Request, res: Response) => {
   }
 });
 
-// Get all leads (optional - for debugging)
+// Get all leads for this funnel (optional - for debugging)
 app.get('/api/leads', async (req: Request, res: Response) => {
   try {
     const result = await pool.query(
-      'SELECT * FROM voice_agent_leads ORDER BY created_at DESC'
+      'SELECT * FROM leads WHERE funnel_id = $1 ORDER BY created_at DESC',
+      ['voice_agent']
     );
 
     res.json({

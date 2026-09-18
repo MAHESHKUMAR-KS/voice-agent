@@ -122,9 +122,12 @@ function PhoneInputWrapper({ value, onChange, required }: PhoneInputProps) {
     setSelectedCountry(country);
     setShowDropdown(false);
     setSearchTerm('');
+    onChange('');
   };
 
-  const phoneNumber = value.replace(/^\+\d+/, '').trim();
+  const phoneNumber = value.startsWith(selectedCountry.dial)
+    ? value.slice(selectedCountry.dial.length).trim()
+    : value.trim();
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
@@ -204,12 +207,12 @@ function PhoneInputWrapper({ value, onChange, required }: PhoneInputProps) {
         <div
           style={{
             position: 'absolute',
-            top: '100%',
+            bottom: '100%',
             left: 0,
             background: 'white',
             border: '1px solid #3b82f6',
             borderRadius: '8px',
-            marginTop: '4px',
+            marginBottom: '4px',
             zIndex: 99999,
             width: '300px',
             maxWidth: '90vw',
@@ -328,8 +331,26 @@ function PhoneInputWrapper({ value, onChange, required }: PhoneInputProps) {
           fontSize: '14px',
           fontFamily: 'inherit',
           color: '#0a1628',
+          caretColor: '#0a1628',
+          WebkitTextFillColor: '#0a1628',
+          WebkitAutofillColor: '#0a1628'
+        }}
+        onInput={(e) => {
+          const target = e.currentTarget as HTMLInputElement;
+          target.style.color = target.value ? '#0a1628' : '#0a1628';
+          (target as any).style['::placeholder'] = '#cbd5e1';
         }}
       />
+      <style>{`
+        input[type="tel"]::placeholder {
+          color: #cbd5e1;
+          opacity: 1;
+        }
+        input[type="tel"]::-webkit-input-placeholder {
+          color: #cbd5e1;
+          opacity: 1;
+        }
+      `}</style>
     </div>
   );
 }
@@ -384,29 +405,33 @@ function App() {
         throw new Error('API key not configured. Please check .env file.');
       }
 
+      const payload = {
+        full_name: formData.full_name,
+        work_email: formData.work_email,
+        phone: formData.phone,
+        company_name: formData.company_name,
+        job_title: formData.job_title,
+        use_case: formData.use_case,
+        other_use_case: formData.other_use_case
+      };
+      console.log('Sending payload:', payload);
+
       const response = await fetch('http://localhost:9045/api/leads', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'X-API-Key': apiKey
         },
-        body: JSON.stringify({
-          funnel_id: "voice_agent",
-          funnel_source: "Voice Agent",
-          full_name: formData.full_name,
-          email: formData.work_email,
-          phone: formData.phone,
-          company: formData.company_name,
-          job_title: formData.job_title,
-          use_case: formData.use_case || "",
-          message: formData.other_use_case || ""
-        })
+        body: JSON.stringify(payload)
       });
 
       const data = await response.json();
+      console.log('Response status:', response.status);
+      console.log('Response data:', data);
       if (response.ok) {
         setIsSuccess(true);
       } else {
+        console.error('Backend error:', data);
         setError(data.message || data.error || 'Failed to submit. Please try again.');
       }
     } catch {
