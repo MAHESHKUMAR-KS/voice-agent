@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, FileText, Mic2, Sparkles, TrendingUp, Stethoscope, Utensils, GraduationCap, Briefcase } from 'lucide-react';
 
 function useInView(threshold = 0.15) {
   const ref = useRef<HTMLDivElement>(null);
@@ -20,49 +20,86 @@ function useInView(threshold = 0.15) {
 interface UseCase {
   id: string;
   title: string;
+  icon: any;
   scenario: string;
-  solution: string;
-  outcome: string;
-  metrics: string[];
+  steps: { icon: any; label: string; detail: string }[];
+  metrics: { value: string; label: string }[];
+  color: string;
 }
 
 export default function UseCaseTabs({ scrollToForm }: { scrollToForm: () => void }) {
   const sectionAnim = useInView();
-  const [activeTab, setActiveTab] = useState('field-support');
+  const [activeTab, setActiveTab] = useState('healthcare');
 
   const useCases: Record<string, UseCase> = {
-    'field-support': {
-      id: 'field-support',
-      title: 'Field Support',
-      scenario: 'A field service technician needs hands-free access to repair procedures while working on industrial equipment.',
-      solution: 'Upload equipment manuals (PDF/Word) → Configure voice persona (technical expert tone) → Deploy to phone system or mobile app',
-      outcome: 'Truck rolls reduced by 34% • First-time fix rate: 89% → 96% • Training time cut from 6 weeks to 2 weeks',
-      metrics: ['34%', 'Truck Rolls', 'Reduced']
-    },
-    'customer-care': {
-      id: 'customer-care',
-      title: 'Customer Care',
-      scenario: 'Support agents spend hours searching knowledge bases while customers wait on hold.',
-      solution: 'Upload FAQs, policy docs, troubleshooting guides → Configure friendly persona → Deploy to call center platform',
-      outcome: 'Hold times: 42 min → 3 min • 70% deflection rate • First-call resolution: 64% → 91%',
-      metrics: ['70%', 'Deflection', 'Rate']
-    },
-    'healthcare': {
+    healthcare: {
       id: 'healthcare',
       title: 'Healthcare',
-      scenario: 'Healthcare staff need instant access to benefits documentation while maintaining HIPAA compliance.',
-      solution: 'Upload benefits plans, coverage policies → Configure compliant persona with audit logging → Deploy to secure phone/web',
-      outcome: 'Claims processed 3.2x faster • 100% audit trail • Zero PHI exposure incidents',
-      metrics: ['3.2x', 'Faster', 'Claims']
+      icon: Stethoscope,
+      scenario: 'Patients need clear explanations of benefits documents without waiting on hold.',
+      steps: [
+        { icon: FileText, label: 'Upload Documents', detail: 'Benefits plans, coverage policies, claim procedures' },
+        { icon: Mic2, label: 'Configure Persona', detail: 'Friendly medical helper, HIPAA-compliant language' },
+        { icon: Sparkles, label: 'Start Talking', detail: 'Ask questions in plain language, get instant voice answers' },
+      ],
+      metrics: [
+        { value: '3.2x', label: 'Faster Claims' },
+        { value: '100%', label: 'Audit Trail' },
+        { value: 'Zero', label: 'PHI Exposure' },
+      ],
+      color: '#7C3AED',
     },
-    'internal-sop': {
-      id: 'internal-sop',
-      title: 'Internal Knowledge',
-      scenario: 'New employees take weeks to learn company procedures and policies.',
-      solution: 'Upload SOPs, training materials, HR policies → Configure onboarding persona → Deploy to Slack/Teams',
-      outcome: 'Onboarding time: 6 weeks → 10 days • Knowledge retention: 58% → 87% • HR support tickets -64%',
-      metrics: ['6 weeks', '→', '10 days']
-    }
+    restaurant: {
+      id: 'restaurant',
+      title: 'Restaurant',
+      icon: Utensils,
+      scenario: 'Customers call asking about menu items, ingredients, and dietary restrictions.',
+      steps: [
+        { icon: FileText, label: 'Upload Menu', detail: 'Full menu PDFs with ingredients, allergens, prep notes' },
+        { icon: Mic2, label: 'Configure Persona', detail: 'Friendly server, knowledgeable about dishes and pairings' },
+        { icon: Sparkles, label: 'Start Talking', detail: 'Customers ask about dishes, get personalized recommendations' },
+      ],
+      metrics: [
+        { value: '85%', label: 'Call Deflection' },
+        { value: '2 min', label: 'Avg. Call Time' },
+        { value: '4.8★', label: 'Satisfaction' },
+      ],
+      color: '#EC4899',
+    },
+    education: {
+      id: 'education',
+      title: 'Education',
+      icon: GraduationCap,
+      scenario: 'Students and parents need quick answers about curriculum and school policies.',
+      steps: [
+        { icon: FileText, label: 'Upload Materials', detail: 'Curriculum guides, handbooks, course catalogs' },
+        { icon: Mic2, label: 'Configure Persona', detail: 'Patient teacher, clear explanations for all ages' },
+        { icon: Sparkles, label: 'Start Talking', detail: 'Ask about requirements, schedules, and resources' },
+      ],
+      metrics: [
+        { value: '6 → 2', label: 'Weeks Onboarding' },
+        { value: '87%', label: 'Retention' },
+        { value: '-64%', label: 'Support Tickets' },
+      ],
+      color: '#0EA5E9',
+    },
+    support: {
+      id: 'support',
+      title: 'Technical Support',
+      icon: Briefcase,
+      scenario: 'Field techs need instant access to repair manuals while hands-on with equipment.',
+      steps: [
+        { icon: FileText, label: 'Upload Manuals', detail: 'Equipment manuals, troubleshooting guides, SOPs' },
+        { icon: Mic2, label: 'Configure Persona', detail: 'Technical expert, precise step-by-step instructions' },
+        { icon: Sparkles, label: 'Start Talking', detail: 'Hands-free voice guidance during repairs' },
+      ],
+      metrics: [
+        { value: '34%', label: 'Fewer Truck Rolls' },
+        { value: '96%', label: 'First-Time Fix' },
+        { value: '3 weeks', label: 'Training Saved' },
+      ],
+      color: '#16A34A',
+    },
   };
 
   const currentUseCase = useCases[activeTab];
@@ -72,7 +109,7 @@ export default function UseCaseTabs({ scrollToForm }: { scrollToForm: () => void
       ref={sectionAnim.ref}
       style={{
         padding: '100px 0',
-        background: 'white',
+        background: 'linear-gradient(180deg, #FFFFFF 0%, var(--paper) 100%)',
       }}
     >
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
@@ -86,19 +123,19 @@ export default function UseCaseTabs({ scrollToForm }: { scrollToForm: () => void
               color: 'var(--ink)',
             }}
           >
-            Solutions for Every Use Case
+            Voice Assistant for Every Industry
           </h2>
           <p
             className={`animate-in ${sectionAnim.visible ? 'visible' : ''} animate-delay-1`}
             style={{
               fontSize: 18,
               color: 'var(--slate)',
-              maxWidth: 600,
+              maxWidth: 650,
               margin: '0 auto',
               lineHeight: 1.6,
             }}
           >
-            Voice RAG works across industries and departments. See how teams like yours are transforming knowledge access.
+            Upload your documents, configure your assistant's persona, and have natural conversations. Adapts to any domain.
           </p>
         </div>
 
@@ -107,121 +144,209 @@ export default function UseCaseTabs({ scrollToForm }: { scrollToForm: () => void
           className={`animate-in ${sectionAnim.visible ? 'visible' : ''} animate-delay-2`}
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-            gap: 16,
+            gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+            gap: 12,
             marginBottom: 48,
-            maxWidth: 800,
+            maxWidth: 700,
             margin: '0 auto 48px',
           }}
         >
-          {Object.values(useCases).map((useCase) => (
-            <button
-              key={useCase.id}
-              onClick={() => setActiveTab(useCase.id)}
-              style={{
-                padding: '12px 16px',
-                border: activeTab === useCase.id ? '2px solid var(--primary)' : '2px solid #e2e8f0',
-                background: activeTab === useCase.id ? 'var(--primary)' : 'white',
-                color: activeTab === useCase.id ? 'white' : 'var(--slate)',
-                borderRadius: 8,
-                fontWeight: 600,
-                fontSize: 14,
-                cursor: 'pointer',
-                transition: 'all 0.3s',
-              }}
-              onMouseEnter={(e) => {
-                if (activeTab !== useCase.id) {
-                  e.currentTarget.style.borderColor = 'var(--primary)';
-                  e.currentTarget.style.color = 'var(--primary)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (activeTab !== useCase.id) {
-                  e.currentTarget.style.borderColor = '#e2e8f0';
-                  e.currentTarget.style.color = 'var(--slate)';
-                }
-              }}
-            >
-              {useCase.title}
-            </button>
-          ))}
+          {Object.values(useCases).map((useCase) => {
+            const Icon = useCase.icon;
+            return (
+              <button
+                key={useCase.id}
+                onClick={() => setActiveTab(useCase.id)}
+                style={{
+                  padding: '14px 12px',
+                  border: activeTab === useCase.id ? `2px solid ${useCase.color}` : '2px solid #e2e8f0',
+                  background: activeTab === useCase.id
+                    ? `linear-gradient(135deg, ${useCase.color}15 0%, ${useCase.color}05 100%)`
+                    : 'white',
+                  color: activeTab === useCase.id ? useCase.color : 'var(--slate)',
+                  borderRadius: 12,
+                  fontWeight: 600,
+                  fontSize: 13,
+                  cursor: 'pointer',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: 6,
+                }}
+                onMouseEnter={(e) => {
+                  if (activeTab !== useCase.id) {
+                    e.currentTarget.style.borderColor = useCase.color;
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = `0 4px 12px ${useCase.color}20`;
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (activeTab !== useCase.id) {
+                    e.currentTarget.style.borderColor = '#e2e8f0';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }
+                }}
+              >
+                <Icon style={{ width: 20, height: 20 }} />
+                <span>{useCase.title}</span>
+              </button>
+            );
+          })}
         </div>
 
-        {/* Content */}
+        {/* Content Card */}
         <div
-          className={`animate-in ${sectionAnim.visible ? 'visible' : ''} animate-delay-3`}
+          key={activeTab}
+          className={`animate-in visible`}
           style={{
-            animation: 'fade-in-up 0.5s ease-out',
+            animation: 'fade-in-up 0.4s ease-out',
           }}
         >
-          <style>{`
-            @keyframes fade-in-up {
-              from { opacity: 0; transform: translateY(12px); }
-              to { opacity: 1; transform: translateY(0); }
-            }
-          `}</style>
-
           <div
             style={{
-              background: 'var(--paper)',
-              borderRadius: 12,
-              padding: 48,
+              background: 'white',
+              borderRadius: 20,
+              padding: 40,
               border: '1px solid #e2e8f0',
+              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.04)',
             }}
           >
-            <div style={{ marginBottom: 32 }}>
-              <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>
-                Scenario
+            {/* Scenario */}
+            <div style={{ marginBottom: 40, textAlign: 'center' }}>
+              <div style={{
+                display: 'inline-flex',
+                padding: '8px 16px',
+                background: `${currentUseCase.color}15`,
+                borderRadius: 8,
+                marginBottom: 16,
+              }}>
+                <span style={{ fontSize: 13, fontWeight: 600, color: currentUseCase.color, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  The Challenge
+                </span>
               </div>
-              <p style={{ fontSize: 16, lineHeight: 1.6, color: 'var(--slate)', margin: 0 }}>
+              <p style={{ fontSize: 18, lineHeight: 1.6, color: 'var(--ink)', margin: 0, fontWeight: 500, maxWidth: 700, margin: '0 auto' }}>
                 {currentUseCase.scenario}
               </p>
             </div>
 
-            <div style={{ marginBottom: 32 }}>
-              <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>
-                Solution
-              </div>
-              <p style={{ fontSize: 16, lineHeight: 1.6, color: 'var(--slate)', margin: 0 }}>
-                {currentUseCase.solution}
-              </p>
+            {/* Steps */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+              gap: 24,
+              marginBottom: 40,
+            }}>
+              {currentUseCase.steps.map((step, index) => {
+                const StepIcon = step.icon;
+                return (
+                  <div
+                    key={index}
+                    style={{
+                      background: 'var(--paper)',
+                      padding: 24,
+                      borderRadius: 16,
+                      border: '1px solid #e2e8f0',
+                      position: 'relative',
+                      transition: 'all 0.3s',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-4px)';
+                      e.currentTarget.style.boxShadow = `0 8px 20px ${currentUseCase.color}15`;
+                      e.currentTarget.style.borderColor = `${currentUseCase.color}40`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                      e.currentTarget.style.borderColor = '#e2e8f0';
+                    }}
+                  >
+                    <div style={{
+                      width: 48,
+                      height: 48,
+                      borderRadius: 12,
+                      background: `${currentUseCase.color}15`,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginBottom: 16,
+                    }}>
+                      <StepIcon style={{ width: 22, height: 22, color: currentUseCase.color }} />
+                    </div>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>
+                      {step.label}
+                    </div>
+                    <div style={{ fontSize: 13, lineHeight: 1.5, color: 'var(--slate)' }}>
+                      {step.detail}
+                    </div>
+                    {index < currentUseCase.steps.length - 1 && (
+                      <ArrowRight style={{
+                        position: 'absolute',
+                        right: -12,
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        width: 24,
+                        height: 24,
+                        color: currentUseCase.color,
+                        opacity: 0.3,
+                        display: window.innerWidth < 768 ? 'none' : 'block',
+                      }} />
+                    )}
+                  </div>
+                );
+              })}
             </div>
 
-            <div style={{ marginBottom: 32, padding: '20px', background: 'white', borderRadius: 8, border: '1px solid #e2e8f0' }}>
-              <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--success)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>
-                Outcome
-              </div>
-              <p style={{ fontSize: 16, lineHeight: 1.6, color: 'var(--slate)', margin: 0 }}>
-                {currentUseCase.outcome}
-              </p>
+            {/* Metrics */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+              gap: 20,
+              padding: 28,
+              background: `linear-gradient(135deg, ${currentUseCase.color}08 0%, ${currentUseCase.color}02 100%)`,
+              borderRadius: 16,
+              marginBottom: 32,
+            }}>
+              {currentUseCase.metrics.map((metric, index) => (
+                <div key={index} style={{ textAlign: 'center' }}>
+                  <div style={{
+                    fontSize: 32,
+                    fontWeight: 900,
+                    color: currentUseCase.color,
+                    marginBottom: 6,
+                    fontFamily: 'Inter, sans-serif',
+                  }}>
+                    {metric.value}
+                  </div>
+                  <div style={{
+                    fontSize: 12,
+                    color: 'var(--slate)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    fontWeight: 600,
+                  }}>
+                    {metric.label}
+                  </div>
+                </div>
+              ))}
             </div>
 
-            <button
-              onClick={scrollToForm}
-              style={{
-                background: 'var(--primary)',
-                color: 'white',
-                border: 'none',
-                padding: '12px 28px',
-                borderRadius: 8,
-                fontWeight: 600,
-                fontSize: 14,
-                cursor: 'pointer',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                transition: 'all 0.3s',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = '#1d4ed8';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'var(--primary)';
-              }}
-            >
-              See This In Action
-              <ArrowRight style={{ width: 16, height: 16 }} />
-            </button>
+            {/* CTA */}
+            <div style={{ textAlign: 'center' }}>
+              <button
+                onClick={scrollToForm}
+                className="btn-primary"
+                style={{
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                }}
+              >
+                <span>Try This Use Case</span>
+                <ArrowRight style={{ width: 18, height: 18 }} />
+              </button>
+            </div>
           </div>
         </div>
       </div>
