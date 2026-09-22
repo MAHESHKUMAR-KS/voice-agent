@@ -1,4 +1,4 @@
-# Quick Start Guide
+0# Quick Start Guide
 
 Get the Adople AI Voice Assistant funnel running in 5 minutes.
 

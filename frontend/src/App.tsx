@@ -19,6 +19,7 @@ import TestimonialSection from './components/TestimonialSection';
 import ComparisonTable from './components/ComparisonTable';
 import FaqAccordion from './components/FaqAccordion';
 import StickyCtaButton from './components/StickyCtaButton';
+import LiveActivityFeed from './components/LiveActivityFeed';
 
 const COUNTRIES = [
   { isoCode: 'in', name: 'India', dial: '+91' },
@@ -525,8 +526,8 @@ function App() {
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: 8,
-                  background: '#F0F9FF',
-                  border: '1px solid #BAE6FD',
+                  background: '#F5F3FF',
+                  border: '1px solid #DDD6FE',
                   borderRadius: 32,
                   padding: '10px 20px',
                   marginBottom: 32,
@@ -535,8 +536,8 @@ function App() {
                   color: 'var(--primary)',
                 }}
               >
-                <Zap style={{ width: 14, height: 14 }} />
-                4.2x faster resolution times • 87% reduction in hold times
+                <Mic style={{ width: 14, height: 14 }} />
+                Speech-to-Speech AI • PDF Knowledge Base • Real-Time Voice
               </div>
 
               <h1
@@ -551,9 +552,9 @@ function App() {
                   margin: '0 auto 24px',
                 }}
               >
-                Turn 45-Minute Support Calls
+                Turn Your Documents Into
                 <span className="gradient-text" style={{ display: 'block', paddingBottom: 4 }}>
-                  Into 90-Second Voice Conversations
+                  Conversational Voice Assistants
                 </span>
               </h1>
 
@@ -568,7 +569,7 @@ function App() {
                   margin: '0 auto 48px',
                 }}
               >
-                Deploy AI voice agents that answer complex questions from your PDFs, manuals, and SOPs — with zero hallucinations and complete data sovereignty. Used by Fortune 500 healthcare, telecom, and insurance teams.
+                Upload PDFs, configure your assistant's persona, and have natural voice conversations with an AI that answers from your documents. Perfect for healthcare, restaurants, education, support, and any knowledge-based interaction.
               </p>
 
               {/* Trust Row */}
@@ -577,9 +578,9 @@ function App() {
                 style={{ display: 'flex', gap: 32, justifyContent: 'center', marginBottom: 48, flexWrap: 'wrap' }}
               >
                 {[
-                  { Icon: Shield, text: 'SOC 2 Certified' },
-                  { Icon: Lock, text: 'Zero AI Training' },
-                  { Icon: Lightning, text: 'Live in 24 Hours' }
+                  { Icon: Mic, text: 'Real-Time Voice' },
+                  { Icon: Target, text: 'Custom Personas' },
+                  { Icon: Lock, text: 'Your Data Only' }
                 ].map((item, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 500, color: 'var(--slate)' }}>
                     <item.Icon style={{ width: 16, height: 16, color: 'var(--primary)' }} />
@@ -594,7 +595,7 @@ function App() {
                 style={{ display: 'flex', gap: 12, alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap' }}
               >
                 <button onClick={scrollToForm} className="btn-primary" style={{ border: 'none', cursor: 'pointer' }}>
-                  <span>Start Free Pilot</span>
+                  <span>Try Voice Assistant</span>
                   <ArrowRight style={{ width: 18, height: 18 }} />
                 </button>
                 <button onClick={scrollToForm} style={{
@@ -620,10 +621,19 @@ function App() {
                     e.currentTarget.style.color = 'var(--primary)';
                   }}
                 >
-                  <span>Watch 2-Min Demo</span>
+                  <span>See How It Works</span>
                 </button>
               </div>
             </div>
+          </div>
+
+          {/* Live Activity Feed - Centered */}
+          <div className={`animate-in ${heroAnim.visible ? 'visible' : ''} animate-delay-5`} style={{
+            marginTop: 80,
+            display: 'flex',
+            justifyContent: 'center',
+          }}>
+            <LiveActivityFeed />
           </div>
 
           {/* ============ CLIENTS MARQUEE (Section 4) ============ */}
@@ -709,10 +719,10 @@ function App() {
           >
             <div style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center', marginBottom: 48 }}>
               <h2 style={{ fontSize: 42, fontWeight: 800, marginBottom: 16 }}>
-                Start Your Voice RAG Pilot
+                Try Voice Assistant
               </h2>
               <p style={{ fontSize: 16, color: 'var(--slate)', lineHeight: 1.6 }}>
-                Get sandbox access + 30-minute strategy call. No credit card required.
+                Upload your PDFs, configure your assistant, and start talking. No credit card required.
               </p>
             </div>
 
@@ -725,10 +735,10 @@ function App() {
                   <div className="form-header">
                     <div style={{ position: 'relative', zIndex: 1 }}>
                       <h3 style={{ fontSize: 20, fontWeight: 700, margin: 0, marginBottom: 6, color: 'var(--white)' }}>
-                        Request Sandbox Access
+                        Get Started with Voice Assistant
                       </h3>
                       <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', margin: 0 }}>
-                        Get instant live access to the voice RAG sandbox.
+                        Start creating conversational assistants from your documents.
                       </p>
                     </div>
                   </div>
@@ -835,7 +845,7 @@ function App() {
                           </>
                         ) : (
                           <>
-                            Unlock Live Demo & Pilot
+                            Start Building Your Assistant
                             <ChevronRight style={{ width: 18, height: 18 }} />
                           </>
                         )}

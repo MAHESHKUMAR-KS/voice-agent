@@ -590,6 +590,18 @@
     flex-shrink: 0;
   }
 
+  /* ---- Live Activity Feed - Responsive ---- */
+  .live-activity-feed {
+    width: 100%;
+    max-width: 440px;
+  }
+
+  @media (max-width: 768px) {
+    .live-activity-feed {
+      max-width: 100%;
+    }
+  }
+
   /* ---- Responsive ---- */
   @media (max-width: 1024px) {
     .hero-grid {
