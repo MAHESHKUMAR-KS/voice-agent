@@ -530,7 +530,7 @@ function App() {
                   border: '1px solid #DDD6FE',
                   borderRadius: 32,
                   padding: '10px 20px',
-                  marginBottom: 32,
+                  marginBottom: 48,
                   fontSize: 13,
                   fontWeight: 600,
                   color: 'var(--primary)',
