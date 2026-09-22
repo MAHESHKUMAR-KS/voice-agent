@@ -572,27 +572,10 @@ function App() {
                 Upload PDFs, configure your assistant's persona, and have natural voice conversations with an AI that answers from your documents. Perfect for healthcare, restaurants, education, support, and any knowledge-based interaction.
               </p>
 
-              {/* Trust Row */}
-              <div
-                className={`animate-in ${heroAnim.visible ? 'visible' : ''} animate-delay-3`}
-                style={{ display: 'flex', gap: 32, justifyContent: 'center', marginBottom: 48, flexWrap: 'wrap' }}
-              >
-                {[
-                  { Icon: Mic, text: 'Real-Time Voice' },
-                  { Icon: Target, text: 'Custom Personas' },
-                  { Icon: Lock, text: 'Your Data Only' }
-                ].map((item, i) => (
-                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 500, color: 'var(--slate)' }}>
-                    <item.Icon style={{ width: 16, height: 16, color: 'var(--primary)' }} />
-                    {item.text}
-                  </div>
-                ))}
-              </div>
-
               {/* Primary CTAs */}
               <div
-                className={`animate-in ${heroAnim.visible ? 'visible' : ''} animate-delay-4`}
-                style={{ display: 'flex', gap: 12, alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap' }}
+                className={`animate-in ${heroAnim.visible ? 'visible' : ''} animate-delay-3`}
+                style={{ display: 'flex', gap: 12, alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', marginBottom: 40 }}
               >
                 <button onClick={scrollToForm} className="btn-primary" style={{ border: 'none', cursor: 'pointer' }}>
                   <span>Try Voice Assistant</span>
@@ -623,6 +606,23 @@ function App() {
                 >
                   <span>See How It Works</span>
                 </button>
+              </div>
+
+              {/* Trust Row */}
+              <div
+                className={`animate-in ${heroAnim.visible ? 'visible' : ''} animate-delay-4`}
+                style={{ display: 'flex', gap: 32, justifyContent: 'center', marginTop: 40, flexWrap: 'wrap' }}
+              >
+                {[
+                  { Icon: Mic, text: 'Real-Time Voice' },
+                  { Icon: Target, text: 'Custom Personas' },
+                  { Icon: Lock, text: 'Your Data Only' }
+                ].map((item, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 500, color: 'var(--slate)' }}>
+                    <item.Icon style={{ width: 16, height: 16, color: 'var(--primary)' }} />
+                    {item.text}
+                  </div>
+                ))}
               </div>
             </div>
           </div>
