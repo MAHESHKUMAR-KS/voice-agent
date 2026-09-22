@@ -596,6 +596,61 @@
     max-width: 440px;
   }
 
+  .hero-content {
+    width: 100%;
+    max-width: 650px;
+    margin: 0 auto;
+  }
+
+  #hero-activity-feed {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .hero-grid {
+      grid-template-columns: 1fr 440px !important;
+      gap: 80px !important;
+      align-items: start !important;
+    }
+
+    .hero-content {
+      text-align: left;
+      max-width: 600px;
+      margin: 0;
+    }
+
+    .hero-content .hero-title,
+    .hero-content .hero-description {
+      text-align: left;
+      margin-left: 0;
+      margin-right: 0;
+    }
+
+    .hero-content > div[style*="inline-flex"] {
+      display: inline-flex !important;
+    }
+
+    #hero-activity-feed {
+      display: block !important;
+    }
+  }
+
+  @media (max-width: 1023px) {
+    #hero-activity-feed {
+      display: block !important;
+      margin-top: 60px;
+    }
+
+    .hero-grid {
+      grid-template-columns: 1fr !important;
+      text-align: center !important;
+    }
+
+    .hero-content {
+      max-width: 100%;
+    }
+  }
+
   @media (max-width: 768px) {
     .live-activity-feed {
       max-width: 100%;

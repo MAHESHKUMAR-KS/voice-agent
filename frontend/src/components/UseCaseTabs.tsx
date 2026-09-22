@@ -281,17 +281,20 @@ export default function UseCaseTabs({ scrollToForm }: { scrollToForm: () => void
                       {step.detail}
                     </div>
                     {index < currentUseCase.steps.length - 1 && (
-                      <ArrowRight style={{
-                        position: 'absolute',
-                        right: -12,
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        width: 24,
-                        height: 24,
-                        color: currentUseCase.color,
-                        opacity: 0.3,
-                        display: window.innerWidth < 768 ? 'none' : 'block',
-                      }} />
+                      <img
+                        src="/arrowhead-pointing-to-the-right.png"
+                        alt="arrow"
+                        style={{
+                          position: 'absolute',
+                          right: -27,
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          width: 28,
+                          height: 28,
+                          filter: `invert(${currentUseCase.color === '#7C3AED' ? '20%' : currentUseCase.color === '#EC4899' ? '25%' : currentUseCase.color === '#0EA5E9' ? '30%' : '35%'}) sepia(${currentUseCase.color === '#7C3AED' ? '50%' : currentUseCase.color === '#EC4899' ? '45%' : currentUseCase.color === '#0EA5E9' ? '40%' : '35%'}) hue-rotate(${currentUseCase.color === '#7C3AED' ? '270deg' : currentUseCase.color === '#EC4899' ? '320deg' : currentUseCase.color === '#0EA5E9' ? '200deg' : '180deg'}) saturate(${currentUseCase.color === '#7C3AED' ? '180%' : currentUseCase.color === '#EC4899' ? '170%' : currentUseCase.color === '#0EA5E9' ? '160%' : '150%'})`,
+                          opacity: 0.7,
+                        }}
+                      />
                     )}
                   </div>
                 );

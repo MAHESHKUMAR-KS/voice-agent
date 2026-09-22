@@ -512,13 +512,13 @@ function App() {
             style={{
               display: 'grid',
               gridTemplateColumns: '1fr',
-              gap: 0,
-              alignItems: 'start',
+              gap: 60,
+              alignItems: 'center',
               textAlign: 'center',
             }}
           >
-            {/* Main Content - Centered */}
-            <div>
+            {/* Main Content - Left */}
+            <div className="hero-content">
               {/* Outcome Badge */}
               <div
                 className={`animate-in ${heroAnim.visible ? 'visible' : ''}`}
@@ -548,8 +548,6 @@ function App() {
                   lineHeight: 1.2,
                   marginBottom: 24,
                   letterSpacing: '-0.03em',
-                  maxWidth: 1000,
-                  margin: '0 auto 24px',
                 }}
               >
                 Turn Your Documents Into
@@ -559,81 +557,77 @@ function App() {
               </h1>
 
               <p
-                className={`animate-in ${heroAnim.visible ? 'visible' : ''} animate-delay-2`}
+                className={`animate-in hero-description ${heroAnim.visible ? 'visible' : ''} animate-delay-2`}
                 style={{
                   fontSize: 18,
                   color: 'var(--slate)',
                   lineHeight: 1.75,
                   marginBottom: 48,
-                  maxWidth: 680,
-                  margin: '0 auto 48px',
+                  maxWidth: 600,
                 }}
               >
                 Upload PDFs, configure your assistant's persona, and have natural voice conversations with an AI that answers from your documents. Perfect for healthcare, restaurants, education, support, and any knowledge-based interaction.
               </p>
 
-              {/* Primary CTAs */}
-              <div
-                className={`animate-in ${heroAnim.visible ? 'visible' : ''} animate-delay-3`}
-                style={{ display: 'flex', gap: 12, alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', marginBottom: 40 }}
-              >
-                <button onClick={scrollToForm} className="btn-primary" style={{ border: 'none', cursor: 'pointer' }}>
-                  <span>Try Voice Assistant</span>
-                  <ArrowRight style={{ width: 18, height: 18 }} />
-                </button>
-                <button onClick={scrollToForm} style={{
-                  border: '2px solid var(--primary)',
-                  background: 'transparent',
-                  color: 'var(--primary)',
-                  padding: '12px 28px',
-                  borderRadius: 10,
-                  fontWeight: 600,
-                  fontSize: 15,
-                  cursor: 'pointer',
-                  transition: 'all 0.3s',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 8,
-                }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = 'var(--primary)';
-                    e.currentTarget.style.color = 'white';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = 'transparent';
-                    e.currentTarget.style.color = 'var(--primary)';
-                  }}
-                >
-                  <span>See How It Works</span>
-                </button>
-              </div>
+            </div>
 
-              {/* Trust Row */}
-              <div
-                className={`animate-in ${heroAnim.visible ? 'visible' : ''} animate-delay-4`}
-                style={{ display: 'flex', gap: 32, justifyContent: 'center', marginTop: 40, flexWrap: 'wrap' }}
-              >
-                {[
-                  { Icon: Mic, text: 'Real-Time Voice' },
-                  { Icon: Target, text: 'Custom Personas' },
-                  { Icon: Lock, text: 'Your Data Only' }
-                ].map((item, i) => (
-                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 500, color: 'var(--slate)' }}>
-                    <item.Icon style={{ width: 16, height: 16, color: 'var(--primary)' }} />
-                    {item.text}
-                  </div>
-                ))}
-              </div>
+            {/* Live Activity Feed - Right Side */}
+            <div className={`animate-in ${heroAnim.visible ? 'visible' : ''} animate-delay-5`} id="hero-activity-feed">
+              <LiveActivityFeed />
             </div>
           </div>
 
-          {/* Live Activity Feed - Centered */}
-          <div className={`animate-in ${heroAnim.visible ? 'visible' : ''} animate-delay-5`} style={{
-            marginTop: 80,
-            display: 'flex',
-            justifyContent: 'center',
-          }}>
-            <LiveActivityFeed />
+          {/* Primary CTAs - Centered Across Full Hero */}
+          <div
+            className={`animate-in ${heroAnim.visible ? 'visible' : ''} animate-delay-3`}
+            style={{ display: 'flex', gap: 12, alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', marginBottom: 40, marginTop: 40 }}
+          >
+            <button onClick={scrollToForm} className="btn-primary" style={{ border: 'none', cursor: 'pointer' }}>
+              <span>Try Voice Assistant</span>
+              <ArrowRight style={{ width: 18, height: 18 }} />
+            </button>
+            <button onClick={scrollToForm} style={{
+              border: '2px solid var(--primary)',
+              background: 'transparent',
+              color: 'var(--primary)',
+              padding: '12px 28px',
+              borderRadius: 10,
+              fontWeight: 600,
+              fontSize: 15,
+              cursor: 'pointer',
+              transition: 'all 0.3s',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+            }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'var(--primary)';
+                e.currentTarget.style.color = 'white';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'transparent';
+                e.currentTarget.style.color = 'var(--primary)';
+              }}
+            >
+              <span>See How It Works</span>
+            </button>
+          </div>
+
+          {/* Trust Row - Centered Across Full Hero */}
+          <div
+            className={`animate-in ${heroAnim.visible ? 'visible' : ''} animate-delay-4`}
+            style={{ display: 'flex', gap: 32, justifyContent: 'center', flexWrap: 'wrap' }}
+          >
+            {[
+              { Icon: Mic, text: 'Real-Time Voice' },
+              { Icon: Target, text: 'Custom Personas' },
+              { Icon: Lock, text: 'Your Data Only' }
+            ].map((item, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 500, color: 'var(--slate)' }}>
+                <item.Icon style={{ width: 16, height: 16, color: 'var(--primary)' }} />
+                {item.text}
+              </div>
+            ))}
           </div>
 
           {/* ============ CLIENTS MARQUEE (Section 4) ============ */}
