@@ -417,7 +417,11 @@ function App() {
       };
       console.log('Sending payload:', payload);
 
-      const response = await fetch('http://localhost:9045/api/leads', {
+      const apiUrl = import.meta.env.VITE_API_URL || ((typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1')
+        ? '/api/leads'
+        : 'http://localhost:9045/api/leads');
+
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

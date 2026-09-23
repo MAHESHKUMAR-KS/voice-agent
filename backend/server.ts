@@ -33,15 +33,21 @@ pool.on('connect', () => {
 });
 
 pool.on('error', (err) => {
-  console.error('❌ Unexpected error on idle client', err);
-  process.exit(-1);
+  console.error('⚠️ Unexpected error on idle client:', err.message);
 });
 
 app.get('/', (req: Request, res: Response) => {
   res.json({ service: 'Voice Agent Funnel Backend', status: 'online', port: PORT });
 });
 
+const envOrigins = (process.env.ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
+const envSubdomain = process.env.SUBDOMAIN;
+const envPublicUrl = process.env.PUBLIC_URL;
+
 const allowedOrigins = [
+  ...envOrigins,
+  ...(envPublicUrl ? [envPublicUrl] : []),
+  ...(envSubdomain ? [`https://${envSubdomain}`, `http://${envSubdomain}`] : []),
   'http://13.201.92.234:9040',
   'http://13.201.92.234:9045',
   'http://localhost:9040',
@@ -53,7 +59,7 @@ const allowedOrigins = [
 // Middleware
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin) || origin.includes('13.201.92.234') || origin === CORS_ORIGIN) {
+    if (!origin || allowedOrigins.includes(origin) || origin.includes('13.201.92.234') || (envSubdomain && origin.includes(envSubdomain)) || origin.includes('adople.in') || origin === CORS_ORIGIN) {
       callback(null, true);
     } else {
       callback(null, true);
@@ -69,7 +75,7 @@ app.use(express.json());
 app.use('/api/leads', (req: Request, res: Response, next) => {
   if (req.method === 'POST') {
     const apiKey = req.headers['x-api-key'];
-    const validApiKey = process.env.VITE_FUNNEL_API_KEY;
+    const validApiKey = process.env.VITE_FUNNEL_API_KEY || process.env.FUNNEL_API_KEY || 'sk_live_voiceagen_5c0e8f57954825660d9480fecd85bb4ac045d14a659e064c';
 
     if (!validApiKey) {
       console.error('❌ VITE_FUNNEL_API_KEY not configured in .env');
@@ -228,8 +234,8 @@ app.post('/api/leads', async (req: Request, res: Response) => {
 
     const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || null;
     const result = await pool.query(sql, [
-      'voice_agent',
-      'voice-agent-funnel',
+      'voice-agent',
+      'Voice Agent',
       full_name.trim(),
       trimmedEmail,
       phone.trim(),
