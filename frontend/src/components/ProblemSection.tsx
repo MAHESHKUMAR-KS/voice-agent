@@ -1,24 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
 import { Clock, Wrench, FileText } from 'lucide-react';
-
-function useInView(threshold = 0.15) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
-      { threshold }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [threshold]);
-  return { ref, visible };
-}
+import useScrollReveal from '../hooks/useScrollReveal';
 
 export default function ProblemSection() {
-  const sectionAnim = useInView();
+  const sectionAnim = useScrollReveal();
 
   const problems = [
     {
@@ -94,29 +78,14 @@ export default function ProblemSection() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(300px, 100%), 1fr))',
             gap: 32,
           }}
         >
           {problems.map((problem, i) => (
             <div
               key={i}
-              className={`animate-in ${sectionAnim.visible ? 'visible' : ''} animate-delay-${i + 1}`}
-              style={{
-                background: 'white',
-                borderRadius: 12,
-                padding: 32,
-                border: '1px solid #e2e8f0',
-                transition: 'all 0.3s',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.08)';
-                e.currentTarget.style.transform = 'translateY(-4px)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = 'none';
-                e.currentTarget.style.transform = 'translateY(0)';
-              }}
+              className={`problem-card animate-in ${sectionAnim.visible ? 'visible' : ''} animate-delay-${i + 2}`}
             >
               <div
                 style={{
@@ -126,66 +95,25 @@ export default function ProblemSection() {
                   marginBottom: 16,
                 }}
               >
-                <div
-                  style={{
-                    width: 48,
-                    height: 48,
-                    borderRadius: 10,
-                    background: '#FEE2E2',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <problem.Icon style={{ width: 24, height: 24, color: '#DC2626' }} />
+                <div className="problem-icon-container">
+                  <problem.Icon className="problem-icon" style={{ width: 24, height: 24, color: '#DC2626' }} />
                 </div>
-                <div style={{ fontSize: 11, fontWeight: 600, color: '#DC2626', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                <div className="problem-stat-badge">
                   {problem.stat}
                 </div>
               </div>
 
-              <h3
-                style={{
-                  fontSize: 18,
-                  fontWeight: 700,
-                  marginBottom: 16,
-                  color: 'var(--ink)',
-                }}
-              >
+              <h3 className="problem-title">
                 {problem.title}
               </h3>
 
-              <ul
-                style={{
-                  listStyle: 'none',
-                  padding: 0,
-                  margin: 0,
-                  display: 'grid',
-                  gap: 10,
-                }}
-              >
+              <ul className="problem-bullets">
                 {problem.bullets.map((bullet, j) => (
-                  <li
-                    key={j}
-                    style={{
-                      fontSize: 14,
-                      color: 'var(--slate)',
-                      lineHeight: 1.6,
-                      paddingLeft: 20,
-                      position: 'relative',
-                    }}
-                  >
-                    <span
-                      style={{
-                        position: 'absolute',
-                        left: 0,
-                        color: '#DC2626',
-                        fontWeight: 700,
-                      }}
-                    >
+                  <li key={j} className="problem-bullet-item">
+                    <span className="problem-bullet-dot">
                       •
                     </span>
-                    {bullet}
+                    <span>{bullet}</span>
                   </li>
                 ))}
               </ul>

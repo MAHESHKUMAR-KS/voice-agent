@@ -1,20 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
-
-function useInView(threshold = 0.15) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
-      { threshold }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [threshold]);
-  return { ref, visible };
-}
+import useScrollReveal from '../hooks/useScrollReveal';
 
 interface Testimonial {
   logo: string;
@@ -22,12 +6,10 @@ interface Testimonial {
   author: string;
   title: string;
   company: string;
-  metric: string;
-  metricLabel: string;
 }
 
 export default function TestimonialSection() {
-  const sectionAnim = useInView();
+  const sectionAnim = useScrollReveal();
 
   const testimonials: Testimonial[] = [
     {
@@ -36,8 +18,6 @@ export default function TestimonialSection() {
       author: 'Sarah Chen',
       title: 'VP Customer Experience',
       company: 'Elevance Health',
-      metric: '93%',
-      metricLabel: 'Deflection Rate'
     },
     {
       logo: '/asset/clients/AT&T.webp',
@@ -45,8 +25,6 @@ export default function TestimonialSection() {
       author: 'David Patel',
       title: 'Operations Director',
       company: 'AT&T Field Services',
-      metric: '34%',
-      metricLabel: 'Truck Roll Reduction'
     },
     {
       logo: '/asset/clients/broadridge.webp',
@@ -54,8 +32,6 @@ export default function TestimonialSection() {
       author: 'Maria Rodriguez',
       title: 'Chief Compliance Officer',
       company: 'Broadridge Financial',
-      metric: '30x',
-      metricLabel: 'Faster Queries'
     }
   ];
 
@@ -97,88 +73,123 @@ export default function TestimonialSection() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
-            gap: 32,
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 1fr))',
+            gap: 28,
           }}
         >
           {testimonials.map((testimonial, i) => (
             <div
               key={i}
-              className={`animate-in ${sectionAnim.visible ? 'visible' : ''} animate-delay-${i + 1}`}
+              className={`animate-in ${sectionAnim.visible ? 'visible' : ''} animate-delay-${i + 2}`}
               style={{
                 background: 'white',
-                borderRadius: 12,
-                padding: 32,
+                borderRadius: 16,
+                padding: '24px 24px 20px',
                 border: '1px solid #e2e8f0',
                 position: 'relative',
-                borderTop: '4px solid var(--primary)',
-                transition: 'all 0.3s',
+                overflow: 'hidden',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.08)';
+                e.currentTarget.style.boxShadow = '0 16px 36px rgba(139, 92, 246, 0.12)';
                 e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.borderColor = 'rgba(139, 92, 246, 0.3)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.boxShadow = 'none';
                 e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.borderColor = '#e2e8f0';
               }}
             >
-              {/* Company Logo */}
-              <div style={{ marginBottom: 24 }}>
-                <img
-                  src={testimonial.logo}
-                  alt={testimonial.company}
-                  style={{
-                    height: 32,
-                    width: 'auto',
-                    maxWidth: 120,
-                    objectFit: 'contain',
-                  }}
-                />
-              </div>
-
-              {/* Quote */}
-              <p
-                style={{
-                  fontSize: 15,
-                  lineHeight: 1.7,
-                  color: 'var(--slate)',
-                  marginBottom: 24,
-                  fontStyle: 'italic',
-                }}
-              >
-                "{testimonial.quote}"
-              </p>
-
-              {/* Metric Badge */}
+              {/* Gradient top accent */}
               <div
                 style={{
-                  background: '#F0F9FF',
-                  border: '1px solid #BAE6FD',
-                  borderRadius: 8,
-                  padding: 12,
-                  marginBottom: 24,
-                  textAlign: 'center',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: 3,
+                  background: 'linear-gradient(90deg, var(--primary), var(--accent))',
                 }}
-              >
-                <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--primary)', marginBottom: 2 }}>
-                  {testimonial.metric}
+              />
+
+              <div>
+                {/* Company Logo */}
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    background: 'var(--paper)',
+                    border: '1px solid var(--border)',
+                    borderRadius: 8,
+                    padding: '6px 12px',
+                    marginBottom: 16,
+                  }}
+                >
+                  <img
+                    src={testimonial.logo}
+                    alt={testimonial.company}
+                    style={{
+                      height: 18,
+                      width: 'auto',
+                      maxWidth: 105,
+                      objectFit: 'contain',
+                    }}
+                  />
                 </div>
-                <div style={{ fontSize: 12, color: 'var(--slate)', fontWeight: 500 }}>
-                  {testimonial.metricLabel}
-                </div>
+
+                {/* Quote */}
+                <p
+                  style={{
+                    fontSize: 14.5,
+                    lineHeight: 1.65,
+                    color: 'var(--slate)',
+                    marginBottom: 20,
+                    fontStyle: 'italic',
+                  }}
+                >
+                  "{testimonial.quote}"
+                </p>
               </div>
 
               {/* Author */}
-              <div>
-                <div style={{ fontWeight: 700, color: 'var(--ink)', fontSize: 14, marginBottom: 2 }}>
-                  {testimonial.author}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
+                  borderTop: '1px solid #f1f5f9',
+                  paddingTop: 16,
+                }}
+              >
+                <div
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: '50%',
+                    background: 'var(--primary-light)',
+                    border: '1px solid #DDD6FE',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 800,
+                    fontSize: 13,
+                    color: 'var(--primary)',
+                    flexShrink: 0,
+                  }}
+                >
+                  {testimonial.author.split(' ').map((n) => n[0]).join('')}
                 </div>
-                <div style={{ fontSize: 13, color: 'var(--slate)', marginBottom: 2 }}>
-                  {testimonial.title}
-                </div>
-                <div style={{ fontSize: 12, color: 'var(--slate)', fontWeight: 500 }}>
-                  {testimonial.company}
+                <div>
+                  <div style={{ fontWeight: 700, color: 'var(--ink)', fontSize: 13.5, marginBottom: 1 }}>
+                    {testimonial.author}
+                  </div>
+                  <div style={{ fontSize: 12, color: 'var(--slate)' }}>
+                    {testimonial.title} • {testimonial.company}
+                  </div>
                 </div>
               </div>
             </div>

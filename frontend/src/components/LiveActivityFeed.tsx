@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { UserCheck, Calendar, Database, Languages, CheckCircle2 } from 'lucide-react';
+import useScrollReveal from '../hooks/useScrollReveal';
 
 interface ActivityItem {
   id: string;
@@ -9,24 +10,8 @@ interface ActivityItem {
   icon: 'qualified' | 'booked' | 'crm' | 'language';
 }
 
-function useInView(threshold = 0.15) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
-      { threshold }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [threshold]);
-  return { ref, visible };
-}
-
 export default function LiveActivityFeed() {
-  const feedAnim = useInView();
+  const feedAnim = useScrollReveal();
 
   const activities: ActivityItem[] = [
     { id: '1', user: 'Healthcare Team', action: 'Voice session started', timestamp: '2 seconds ago', icon: 'qualified' },
@@ -37,9 +22,9 @@ export default function LiveActivityFeed() {
 
   const getIcon = (type: string) => {
     const iconMap = {
-      qualified: { Icon: UserCheck, color: '#2563EB', bg: 'rgba(37, 99, 235, 0.1)' },
+      qualified: { Icon: UserCheck, color: '#EC4899', bg: 'rgba(236, 72, 153, 0.1)' },
       booked: { Icon: Calendar, color: '#16A34A', bg: 'rgba(22, 163, 74, 0.1)' },
-      crm: { Icon: Database, color: '#7C3AED', bg: 'rgba(124, 58, 237, 0.1)' },
+      crm: { Icon: Database, color: '#8B5CF6', bg: 'rgba(139, 92, 246, 0.1)' },
       language: { Icon: Languages, color: '#F97316', bg: 'rgba(249, 115, 22, 0.1)' },
     };
     return iconMap[type as keyof typeof iconMap] || iconMap.qualified;
@@ -50,10 +35,10 @@ export default function LiveActivityFeed() {
       ref={feedAnim.ref}
       className={`live-activity-feed animate-in ${feedAnim.visible ? 'visible' : ''}`}
       style={{
-        background: 'rgba(240, 249, 255, 0.5)',
+        background: 'rgba(245, 243, 255, 0.5)',
         backdropFilter: 'blur(10px)',
         WebkitBackdropFilter: 'blur(10px)',
-        border: '1px solid rgba(124, 58, 237, 0.1)',
+        border: '1px solid rgba(139, 92, 246, 0.1)',
         borderRadius: 16,
         padding: 24,
         maxWidth: 440,
@@ -66,7 +51,7 @@ export default function LiveActivityFeed() {
         justifyContent: 'space-between',
         marginBottom: 20,
         paddingBottom: 16,
-        borderBottom: '1px solid rgba(124, 58, 237, 0.08)',
+        borderBottom: '1px solid rgba(139, 92, 246, 0.08)',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <div style={{
@@ -109,14 +94,14 @@ export default function LiveActivityFeed() {
                 gap: 12,
                 padding: 12,
                 background: 'rgba(255, 255, 255, 0.6)',
-                border: '1px solid rgba(124, 58, 237, 0.06)',
+                border: '1px solid rgba(139, 92, 246, 0.06)',
                 borderRadius: 12,
                 transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                 transitionDelay: `${index * 0.1}s`,
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(124, 58, 237, 0.1)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(139, 92, 246, 0.1)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
@@ -191,7 +176,7 @@ export default function LiveActivityFeed() {
         gap: 12,
         marginTop: 20,
         paddingTop: 16,
-        borderTop: '1px solid rgba(124, 58, 237, 0.08)',
+        borderTop: '1px solid rgba(139, 92, 246, 0.08)',
       }}>
         {[
           { label: 'Voice sessions', value: '1,243' },

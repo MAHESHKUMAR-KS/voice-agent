@@ -1,21 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
-import { ArrowRight, FileText, Mic2, Sparkles, TrendingUp, Stethoscope, Utensils, GraduationCap, Briefcase } from 'lucide-react';
-
-function useInView(threshold = 0.15) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
-      { threshold }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [threshold]);
-  return { ref, visible };
-}
+import { useState } from 'react';
+import { ArrowRight, FileText, Mic2, Sparkles, Stethoscope, Utensils, GraduationCap, Briefcase } from 'lucide-react';
+import useScrollReveal from '../hooks/useScrollReveal';
 
 interface UseCase {
   id: string;
@@ -28,7 +13,7 @@ interface UseCase {
 }
 
 export default function UseCaseTabs({ scrollToForm }: { scrollToForm: () => void }) {
-  const sectionAnim = useInView();
+  const sectionAnim = useScrollReveal();
   const [activeTab, setActiveTab] = useState('healthcare');
 
   const useCases: Record<string, UseCase> = {
@@ -47,7 +32,7 @@ export default function UseCaseTabs({ scrollToForm }: { scrollToForm: () => void
         { value: '100%', label: 'Audit Trail' },
         { value: 'Zero', label: 'PHI Exposure' },
       ],
-      color: '#7C3AED',
+      color: '#8B5CF6',
     },
     restaurant: {
       id: 'restaurant',
@@ -106,6 +91,7 @@ export default function UseCaseTabs({ scrollToForm }: { scrollToForm: () => void
 
   return (
     <section
+      id="features"
       ref={sectionAnim.ref}
       style={{
         padding: '100px 0',
@@ -144,7 +130,7 @@ export default function UseCaseTabs({ scrollToForm }: { scrollToForm: () => void
           className={`animate-in ${sectionAnim.visible ? 'visible' : ''} animate-delay-2`}
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(140px, 100%), 1fr))',
             gap: 12,
             marginBottom: 48,
             maxWidth: 700,
@@ -199,7 +185,7 @@ export default function UseCaseTabs({ scrollToForm }: { scrollToForm: () => void
         {/* Content Card */}
         <div
           key={activeTab}
-          className={`animate-in visible`}
+          className={`animate-in ${sectionAnim.visible ? 'visible' : ''} animate-delay-3`}
           style={{
             animation: 'fade-in-up 0.4s ease-out',
           }}
@@ -226,7 +212,7 @@ export default function UseCaseTabs({ scrollToForm }: { scrollToForm: () => void
                   The Challenge
                 </span>
               </div>
-              <p style={{ fontSize: 18, lineHeight: 1.6, color: 'var(--ink)', margin: 0, fontWeight: 500, maxWidth: 700, margin: '0 auto' }}>
+              <p style={{ fontSize: 18, lineHeight: 1.6, color: 'var(--ink)', fontWeight: 500, maxWidth: 700, margin: '0 auto' }}>
                 {currentUseCase.scenario}
               </p>
             </div>
@@ -234,7 +220,7 @@ export default function UseCaseTabs({ scrollToForm }: { scrollToForm: () => void
             {/* Steps */}
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(240px, 100%), 1fr))',
               gap: 24,
               marginBottom: 40,
             }}>
@@ -291,7 +277,7 @@ export default function UseCaseTabs({ scrollToForm }: { scrollToForm: () => void
                           transform: 'translateY(-50%)',
                           width: 28,
                           height: 28,
-                          filter: `invert(${currentUseCase.color === '#7C3AED' ? '20%' : currentUseCase.color === '#EC4899' ? '25%' : currentUseCase.color === '#0EA5E9' ? '30%' : '35%'}) sepia(${currentUseCase.color === '#7C3AED' ? '50%' : currentUseCase.color === '#EC4899' ? '45%' : currentUseCase.color === '#0EA5E9' ? '40%' : '35%'}) hue-rotate(${currentUseCase.color === '#7C3AED' ? '270deg' : currentUseCase.color === '#EC4899' ? '320deg' : currentUseCase.color === '#0EA5E9' ? '200deg' : '180deg'}) saturate(${currentUseCase.color === '#7C3AED' ? '180%' : currentUseCase.color === '#EC4899' ? '170%' : currentUseCase.color === '#0EA5E9' ? '160%' : '150%'})`,
+                          filter: `invert(${currentUseCase.color === '#8B5CF6' ? '20%' : currentUseCase.color === '#EC4899' ? '25%' : currentUseCase.color === '#0EA5E9' ? '30%' : '35%'}) sepia(${currentUseCase.color === '#8B5CF6' ? '50%' : currentUseCase.color === '#EC4899' ? '45%' : currentUseCase.color === '#0EA5E9' ? '40%' : '35%'}) hue-rotate(${currentUseCase.color === '#8B5CF6' ? '270deg' : currentUseCase.color === '#EC4899' ? '320deg' : currentUseCase.color === '#0EA5E9' ? '200deg' : '180deg'}) saturate(${currentUseCase.color === '#8B5CF6' ? '180%' : currentUseCase.color === '#EC4899' ? '170%' : currentUseCase.color === '#0EA5E9' ? '160%' : '150%'})`,
                           opacity: 0.7,
                         }}
                       />
@@ -304,7 +290,7 @@ export default function UseCaseTabs({ scrollToForm }: { scrollToForm: () => void
             {/* Metrics */}
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(160px, 100%), 1fr))',
               gap: 20,
               padding: 28,
               background: `linear-gradient(135deg, ${currentUseCase.color}08 0%, ${currentUseCase.color}02 100%)`,

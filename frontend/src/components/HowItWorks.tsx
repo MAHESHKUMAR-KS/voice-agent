@@ -1,24 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
 import { Upload, Settings, Rocket } from 'lucide-react';
-
-function useInView(threshold = 0.15) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
-      { threshold }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [threshold]);
-  return { ref, visible };
-}
+import useScrollReveal from '../hooks/useScrollReveal';
 
 export default function HowItWorks() {
-  const sectionAnim = useInView();
+  const sectionAnim = useScrollReveal();
 
   const steps = [
     {
@@ -73,23 +57,17 @@ export default function HowItWorks() {
           </p>
         </div>
 
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: 40,
-            position: 'relative',
-          }}
-        >
+        <div className="steps-grid">
           {/* Connecting Line */}
           <div
+            className="steps-connector"
             style={{
               position: 'absolute',
               top: 60,
               left: '16.66%',
               right: '16.66%',
               height: '2px',
-              background: 'linear-gradient(to right, transparent, #3b82f6 20%, #3b82f6 80%, transparent)',
+              background: 'linear-gradient(to right, transparent, #8B5CF6 20%, #8B5CF6 80%, transparent)',
               pointerEvents: 'none',
               zIndex: 0,
             }}
@@ -98,7 +76,7 @@ export default function HowItWorks() {
           {steps.map((step, i) => (
             <div
               key={i}
-              className={`animate-in ${sectionAnim.visible ? 'visible' : ''} animate-delay-${i + 1}`}
+              className={`animate-in ${sectionAnim.visible ? 'visible' : ''} animate-delay-${i + 2}`}
               style={{
                 position: 'relative',
                 zIndex: 1,
@@ -116,11 +94,11 @@ export default function HowItWorks() {
                     width: 80,
                     height: 80,
                     borderRadius: '50%',
-                    background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                    background: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    boxShadow: '0 8px 24px rgba(59, 130, 246, 0.2)',
+                    boxShadow: '0 8px 24px rgba(139, 92, 246, 0.2)',
                     position: 'relative',
                   }}
                 >
@@ -177,13 +155,13 @@ export default function HowItWorks() {
 
         {/* Quick Win Highlight */}
         <div
-          className={`animate-in ${sectionAnim.visible ? 'visible' : ''} animate-delay-4`}
+          className={`animate-in ${sectionAnim.visible ? 'visible' : ''} animate-delay-5`}
           style={{
             marginTop: 80,
             padding: 32,
-            background: 'linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%)',
+            background: 'linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 100%)',
             borderRadius: 12,
-            border: '1px solid #BAE6FD',
+            border: '1px solid #DDD6FE',
             textAlign: 'center',
           }}
         >

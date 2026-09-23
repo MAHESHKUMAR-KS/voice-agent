@@ -1,21 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { ChevronDown, ArrowRight } from 'lucide-react';
-
-function useInView(threshold = 0.15) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
-      { threshold }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [threshold]);
-  return { ref, visible };
-}
+import useScrollReveal from '../hooks/useScrollReveal';
 
 interface FAQ {
   question: string;
@@ -23,7 +8,7 @@ interface FAQ {
 }
 
 export default function FaqAccordion({ scrollToForm }: { scrollToForm: () => void }) {
-  const sectionAnim = useInView();
+  const sectionAnim = useScrollReveal();
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   const faqs: FAQ[] = [
@@ -95,7 +80,7 @@ export default function FaqAccordion({ scrollToForm }: { scrollToForm: () => voi
           {faqs.map((faq, i) => (
             <div
               key={i}
-              className={`animate-in ${sectionAnim.visible ? 'visible' : ''} animate-delay-${(i % 3) + 1}`}
+              className={`animate-in ${sectionAnim.visible ? 'visible' : ''} animate-delay-${Math.min(i + 2, 6)}`}
               style={{
                 background: 'white',
                 borderRadius: 10,
@@ -106,6 +91,9 @@ export default function FaqAccordion({ scrollToForm }: { scrollToForm: () => voi
             >
               <button
                 onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                aria-expanded={openFaq === i}
+                aria-controls={`faq-panel-${i}`}
+                id={`faq-heading-${i}`}
                 style={{
                   width: '100%',
                   padding: '20px 24px',
@@ -150,6 +138,9 @@ export default function FaqAccordion({ scrollToForm }: { scrollToForm: () => voi
 
               {openFaq === i && (
                 <div
+                  id={`faq-panel-${i}`}
+                  role="region"
+                  aria-labelledby={`faq-heading-${i}`}
                   style={{
                     padding: '0 24px 20px',
                     borderTop: '1px solid #e2e8f0',
@@ -180,13 +171,13 @@ export default function FaqAccordion({ scrollToForm }: { scrollToForm: () => voi
 
         {/* Final CTA */}
         <div
-          className={`animate-in ${sectionAnim.visible ? 'visible' : ''} animate-delay-4`}
+          className={`animate-in ${sectionAnim.visible ? 'visible' : ''} animate-delay-5`}
           style={{
             marginTop: 80,
             padding: 48,
-            background: 'linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%)',
+            background: 'linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 100%)',
             borderRadius: 12,
-            border: '1px solid #BAE6FD',
+            border: '1px solid #DDD6FE',
             textAlign: 'center',
           }}
         >
@@ -226,7 +217,7 @@ export default function FaqAccordion({ scrollToForm }: { scrollToForm: () => voi
               transition: 'all 0.3s',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = '#1d4ed8';
+              e.currentTarget.style.background = '#7C3AED';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.background = 'var(--primary)';

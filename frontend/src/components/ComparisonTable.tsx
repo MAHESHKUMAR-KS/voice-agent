@@ -1,24 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
 import { CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
-
-function useInView(threshold = 0.15) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
-      { threshold }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [threshold]);
-  return { ref, visible };
-}
+import useScrollReveal from '../hooks/useScrollReveal';
 
 export default function ComparisonTable() {
-  const sectionAnim = useInView();
+  const sectionAnim = useScrollReveal();
 
   const features = [
     { name: 'Hallucination Risk', voiceRag: 'check', chatgpt: 'alert', knowledge: 'check' },
@@ -97,16 +81,16 @@ export default function ComparisonTable() {
           >
             <thead>
               <tr style={{ background: 'var(--paper)', borderBottom: '2px solid #e2e8f0' }}>
-                <th style={{ padding: '16px 20px', textAlign: 'left', fontWeight: 700, color: 'var(--ink)' }}>
+                <th scope="col" style={{ padding: '16px 20px', textAlign: 'left', fontWeight: 700, color: 'var(--ink)' }}>
                   Feature
                 </th>
-                <th style={{ padding: '16px 20px', textAlign: 'center', fontWeight: 700, color: 'white', background: 'var(--primary)' }}>
+                <th scope="col" style={{ padding: '16px 20px', textAlign: 'center', fontWeight: 700, color: 'white', background: 'var(--primary)' }}>
                   Voice RAG
                 </th>
-                <th style={{ padding: '16px 20px', textAlign: 'center', fontWeight: 700, color: 'var(--slate)' }}>
+                <th scope="col" style={{ padding: '16px 20px', textAlign: 'center', fontWeight: 700, color: 'var(--slate)' }}>
                   ChatGPT
                 </th>
-                <th style={{ padding: '16px 20px', textAlign: 'center', fontWeight: 700, color: 'var(--slate)' }}>
+                <th scope="col" style={{ padding: '16px 20px', textAlign: 'center', fontWeight: 700, color: 'var(--slate)' }}>
                   Knowledge Bases
                 </th>
               </tr>
@@ -123,7 +107,7 @@ export default function ComparisonTable() {
                   <td style={{ padding: '16px 20px', fontWeight: 500, color: 'var(--ink)' }}>
                     {feature.name}
                   </td>
-                  <td style={{ padding: '16px 20px', textAlign: 'center', background: 'rgba(59, 130, 246, 0.03)' }}>
+                  <td style={{ padding: '16px 20px', textAlign: 'center', background: 'rgba(139, 92, 246, 0.05)' }}>
                     <IconComponent type={feature.voiceRag} />
                   </td>
                   <td style={{ padding: '16px 20px', textAlign: 'center' }}>

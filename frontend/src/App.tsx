@@ -11,6 +11,14 @@ import {
   Target,
   Mic,
   ChevronDown,
+  User,
+  Mail,
+  Briefcase,
+  Building2,
+  Sparkles,
+  ShieldCheck,
+  FileCheck,
+  Headset,
 } from 'lucide-react';
 import ProblemSection from './components/ProblemSection';
 import UseCaseTabs from './components/UseCaseTabs';
@@ -20,6 +28,8 @@ import ComparisonTable from './components/ComparisonTable';
 import FaqAccordion from './components/FaqAccordion';
 import StickyCtaButton from './components/StickyCtaButton';
 import LiveActivityFeed from './components/LiveActivityFeed';
+import LoadingScreen from './components/LoadingScreen';
+import useScrollReveal from './hooks/useScrollReveal';
 
 const COUNTRIES = [
   { isoCode: 'in', name: 'India', dial: '+91' },
@@ -65,21 +75,7 @@ interface FormData {
   phone: string;
 }
 
-function useInView(threshold = 0.15) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
-      { threshold }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [threshold]);
-  return { ref, visible };
-}
+
 
 interface PhoneInputProps {
   value: string;
@@ -145,16 +141,7 @@ function PhoneInputWrapper({ value, onChange, required }: PhoneInputProps) {
   return (
     <div
       ref={dropdownRef}
-      style={{
-        display: 'flex',
-        gap: 0,
-        position: 'relative',
-        width: '100%',
-        border: '1px solid #e2e8f0',
-        borderRadius: '8px',
-        background: '#f7f9fc',
-        transition: 'border-color 0.3s, box-shadow 0.3s',
-      }}
+      className="phone-input-container"
     >
       <button
         ref={buttonRef}
@@ -165,22 +152,21 @@ function PhoneInputWrapper({ value, onChange, required }: PhoneInputProps) {
           alignItems: 'center',
           gap: '8px',
           padding: '12px 14px',
-          background: '#eef2f7',
+          background: 'rgba(139, 92, 246, 0.05)',
           border: 'none',
-          borderRight: '1px solid #e2e8f0',
+          borderRight: '1.5px solid var(--border)',
           fontFamily: 'inherit',
           fontSize: '14px',
           fontWeight: 600,
-          color: '#0a1628',
+          color: 'var(--ink)',
           cursor: 'pointer',
-          outline: 'none',
-          borderRadius: '8px 0 0 8px',
+          borderRadius: '9px 0 0 9px',
           transition: 'background 0.2s',
-          minWidth: '110px',
+          minWidth: '105px',
           justifyContent: 'center',
         }}
-        onMouseEnter={(e) => (e.currentTarget.style.background = '#e2e8f0')}
-        onMouseLeave={(e) => (e.currentTarget.style.background = '#eef2f7')}
+        onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(139, 92, 246, 0.1)')}
+        onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(139, 92, 246, 0.05)')}
       >
         <img
           src={`https://flagcdn.com/w20/${selectedCountry.isoCode}.png`}
@@ -211,7 +197,7 @@ function PhoneInputWrapper({ value, onChange, required }: PhoneInputProps) {
             bottom: '100%',
             left: 0,
             background: 'white',
-            border: '1px solid #3b82f6',
+            border: '1px solid #8B5CF6',
             borderRadius: '8px',
             marginBottom: '4px',
             zIndex: 99999,
@@ -246,13 +232,13 @@ function PhoneInputWrapper({ value, onChange, required }: PhoneInputProps) {
                 width: '100%',
                 padding: '8px 12px',
                 background: 'white',
-                border: '2px solid #3b82f6',
+                border: '2px solid #8B5CF6',
                 borderRadius: '4px',
                 fontSize: '14px',
                 fontFamily: 'inherit',
                 boxSizing: 'border-box',
                 outline: 'none',
-                boxShadow: '0 0 0 2px rgba(59, 130, 246, 0.15)',
+                boxShadow: '0 0 0 2px rgba(139, 92, 246, 0.15)',
               }}
             />
           </div>
@@ -328,7 +314,6 @@ function PhoneInputWrapper({ value, onChange, required }: PhoneInputProps) {
           padding: '12px 16px',
           flex: 1,
           width: '100%',
-          outline: 'none',
           fontSize: '14px',
           fontFamily: 'inherit',
           color: '#0a1628',
@@ -384,10 +369,17 @@ function App() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const heroAnim = useInView();
+  const heroAnim = useScrollReveal();
+  const marqueeAnim = useScrollReveal();
+  const formSectionAnim = useScrollReveal();
 
   const scrollToForm = () => {
     formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  const scrollToAnchor = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    e.preventDefault();
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -417,11 +409,7 @@ function App() {
       };
       console.log('Sending payload:', payload);
 
-      const apiUrl = import.meta.env.VITE_API_URL || ((typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1')
-        ? '/api/leads'
-        : 'http://localhost:9045/api/leads');
-
-      const response = await fetch(apiUrl, {
+      const response = await fetch('http://localhost:9045/api/leads', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -462,6 +450,7 @@ function App() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--paper)' }}>
+      <LoadingScreen />
       <StickyCtaButton show={showStickyCta} scrollToForm={scrollToForm} />
 
       {/* ============ HEADER ============ */}
@@ -485,17 +474,12 @@ function App() {
             </div>
           </div>
 
-          <nav style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
+          <nav className="header-nav">
             <a href="#features" style={{
               textDecoration: 'none', fontSize: 14, fontWeight: 500, color: 'var(--slate)',
               transition: 'color 0.2s',
               cursor: 'pointer'
-            }} onClick={scrollToForm}>Features</a>
-            <a href="#form" style={{
-              textDecoration: 'none', fontSize: 14, fontWeight: 500, color: 'var(--slate)',
-              transition: 'color 0.2s',
-              cursor: 'pointer'
-            }} onClick={scrollToForm}>Demo</a>
+            }} onClick={(e) => scrollToAnchor(e, 'features')}>Features</a>
           </nav>
 
           <button onClick={scrollToForm} className="btn-primary" style={{ padding: '10px 22px', fontSize: 14, border: 'none', cursor: 'pointer' }}>
@@ -507,7 +491,7 @@ function App() {
 
 
       {/* ============ HERO SECTION ============ */}
-      <section className="hero-section" style={{ padding: '100px 0 80px' }} id="hero">
+      <section className="hero-section" style={{ padding: '140px 0 80px' }} id="hero">
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 1 }}>
 
           <div
@@ -583,7 +567,7 @@ function App() {
 
           {/* Primary CTAs - Centered Across Full Hero */}
           <div
-            className={`animate-in ${heroAnim.visible ? 'visible' : ''} animate-delay-3`}
+            className={`hero-cta-row animate-in ${heroAnim.visible ? 'visible' : ''} animate-delay-3`}
             style={{ display: 'flex', gap: 12, alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', marginBottom: 40, marginTop: 40 }}
           >
             <button onClick={scrollToForm} className="btn-primary" style={{ border: 'none', cursor: 'pointer' }}>
@@ -635,20 +619,21 @@ function App() {
           </div>
 
           {/* ============ CLIENTS MARQUEE (Section 4) ============ */}
-          <div style={{ marginTop: 120, textAlign: 'center' }}>
-            <p className="mono" style={{
+          <div ref={marqueeAnim.ref} style={{ marginTop: 120, textAlign: 'center' }}>
+            <p className={`mono animate-in ${marqueeAnim.visible ? 'visible' : ''}`} style={{
               fontSize: 11, color: 'var(--slate-light)', letterSpacing: '0.08em', marginBottom: 32,
               fontWeight: 500, textTransform: 'uppercase',
             }}>
               Trusted by teams at
             </p>
             <div
+              className={`animate-in ${marqueeAnim.visible ? 'visible' : ''} animate-delay-1`}
               onMouseEnter={() => setIsMarqueeHovered(true)}
               onMouseLeave={() => setIsMarqueeHovered(false)}
               style={{
                 overflow: 'hidden',
                 position: 'relative',
-                background: 'rgba(59, 130, 246, 0.03)',
+                background: 'rgba(139, 92, 246, 0.03)',
                 borderRadius: 16,
                 padding: '32px 0',
               }}
@@ -712,36 +697,181 @@ function App() {
 
           {/* Section 10: Form Section */}
           <div
-            ref={formRef}
-            style={{ marginTop: 80, padding: '80px 0', borderTop: '1px solid #e2e8f0' }}
+            ref={(el) => {
+              (formRef as any).current = el;
+              (formSectionAnim.ref as any).current = el;
+            }}
+            id="demo"
+            className="demo-section-container"
+            style={{ marginTop: 80, padding: '90px 0', borderTop: '1px solid #e2e8f0', position: 'relative' }}
           >
-            <div style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center', marginBottom: 48 }}>
-              <h2 style={{ fontSize: 42, fontWeight: 800, marginBottom: 16 }}>
+            <div style={{ maxWidth: 840, margin: '0 auto', textAlign: 'center', marginBottom: 48, position: 'relative', zIndex: 1 }}>
+              <div
+                className={`animate-in ${formSectionAnim.visible ? 'visible' : ''}`}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  padding: '6px 16px',
+                  borderRadius: 24,
+                  background: 'rgba(139, 92, 246, 0.08)',
+                  border: '1px solid rgba(139, 92, 246, 0.2)',
+                  marginBottom: 16,
+                  color: 'var(--primary)',
+                  fontSize: 12,
+                  fontWeight: 600,
+                }}
+              >
+                <Sparkles style={{ width: 14, height: 14 }} />
+                <span>FAST 60-SECOND ONBOARDING • NO CREDIT CARD REQUIRED</span>
+              </div>
+              <h2
+                className={`animate-in ${formSectionAnim.visible ? 'visible' : ''}`}
+                style={{ fontSize: 44, fontWeight: 800, marginBottom: 16, color: 'var(--ink)' }}
+              >
                 Try Voice Assistant
               </h2>
-              <p style={{ fontSize: 16, color: 'var(--slate)', lineHeight: 1.6 }}>
+              <p
+                className={`animate-in ${formSectionAnim.visible ? 'visible' : ''} animate-delay-1`}
+                style={{ fontSize: 17, color: 'var(--slate)', lineHeight: 1.6, maxWidth: 640, margin: '0 auto' }}
+              >
                 Upload your PDFs, configure your assistant, and start talking. No credit card required.
               </p>
             </div>
 
-            <div
-              className={`form-card`}
-              style={{ maxWidth: 500, margin: '0 auto' }}
-            >
-              {!isSuccess ? (
-                <>
+            {!isSuccess ? (
+              <div className="demo-split-grid" style={{ position: 'relative', zIndex: 2 }}>
+                {/* Left Side: Enterprise Value & Trust Panel */}
+                <div className={`demo-value-panel animate-in ${formSectionAnim.visible ? 'visible' : ''} animate-delay-2`}>
+                  <div>
+                    <div style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      padding: '6px 14px',
+                      borderRadius: 20,
+                      background: 'rgba(139, 92, 246, 0.08)',
+                      border: '1px solid rgba(139, 92, 246, 0.2)',
+                      marginBottom: 20,
+                    }}>
+                      <span style={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: '50%',
+                        background: '#16a34a',
+                        boxShadow: '0 0 8px rgba(22, 163, 74, 0.6)',
+                        animation: 'pulse 2s infinite',
+                      }} />
+                      <span className="mono" style={{ fontSize: 11, fontWeight: 600, color: 'var(--primary)', letterSpacing: '0.04em' }}>
+                        INSTANT SANDBOX ACCESS
+                      </span>
+                    </div>
+
+                    <h3 style={{ fontSize: 24, fontWeight: 800, color: 'var(--ink)', lineHeight: 1.3, marginBottom: 12 }}>
+                      Experience Voice Intelligence On Your Real Data
+                    </h3>
+                    <p style={{ fontSize: 14, color: 'var(--slate)', lineHeight: 1.6, marginBottom: 28 }}>
+                      See how teams convert dense operational manuals, customer guidelines, and technical SOPs into live voice assistants.
+                    </p>
+
+                    <div style={{ display: 'grid', gap: 14, marginBottom: 30 }}>
+                      <div className="value-feature-card">
+                        <div className="value-icon-box">
+                          <Sparkles style={{ width: 18, height: 18 }} />
+                        </div>
+                        <div>
+                          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', marginBottom: 2 }}>
+                            Instant Interactive Sandbox
+                          </div>
+                          <div style={{ fontSize: 12, color: 'var(--slate)', lineHeight: 1.5 }}>
+                            Immediate access to sample domain knowledge and conversational audio playback.
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="value-feature-card">
+                        <div className="value-icon-box">
+                          <FileCheck style={{ width: 18, height: 18 }} />
+                        </div>
+                        <div>
+                          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', marginBottom: 2 }}>
+                            Custom Document Ingestion
+                          </div>
+                          <div style={{ fontSize: 12, color: 'var(--slate)', lineHeight: 1.5 }}>
+                            Test your PDFs and standard operating procedures with strictly zero hallucinations.
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="value-feature-card">
+                        <div className="value-icon-box">
+                          <Headset style={{ width: 18, height: 18 }} />
+                        </div>
+                        <div>
+                          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', marginBottom: 2 }}>
+                            Dedicated AI Engineer
+                          </div>
+                          <div style={{ fontSize: 12, color: 'var(--slate)', lineHeight: 1.5 }}>
+                            A voice solutions engineer reviews your architecture and connects within 24 hours.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{
+                    paddingTop: 20,
+                    borderTop: '1px solid rgba(139, 92, 246, 0.12)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 12,
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 18, flexWrap: 'wrap' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 600, color: 'var(--slate)' }}>
+                        <ShieldCheck style={{ width: 16, height: 16, color: 'var(--success)' }} />
+                        Zero 3rd-party LLM Training
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 600, color: 'var(--slate)' }}>
+                        <Lock style={{ width: 14, height: 14, color: 'var(--primary)' }} />
+                        Full Data Sovereignty
+                      </div>
+                    </div>
+                    <div style={{ fontSize: 12, color: 'var(--slate-light)', fontStyle: 'italic' }}>
+                      &ldquo;The voice accuracy on technical SOPs was immediate. What took 15 minutes now takes 20 seconds.&rdquo;
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Side: The Form Card */}
+                <div className={`form-card animate-in ${formSectionAnim.visible ? 'visible' : ''} animate-delay-3`}>
                   <div className="form-header">
                     <div style={{ position: 'relative', zIndex: 1 }}>
+                      <div style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 6,
+                        background: 'rgba(255, 255, 255, 0.2)',
+                        borderRadius: 12,
+                        padding: '4px 10px',
+                        marginBottom: 10,
+                        fontSize: 11,
+                        fontWeight: 600,
+                        letterSpacing: '0.04em',
+                        textTransform: 'uppercase',
+                      }}>
+                        <Sparkles style={{ width: 12, height: 12 }} />
+                        Free Trial Access
+                      </div>
                       <h3 style={{ fontSize: 20, fontWeight: 700, margin: 0, marginBottom: 6, color: 'var(--white)' }}>
                         Get Started with Voice Assistant
                       </h3>
-                      <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', margin: 0 }}>
+                      <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)', margin: 0 }}>
                         Start creating conversational assistants from your documents.
                       </p>
                     </div>
                   </div>
 
-                  <form onSubmit={handleSubmit} style={{ padding: 24, display: 'grid', gap: 16 }}>
+                  <form onSubmit={handleSubmit} style={{ padding: '24px 28px', display: 'grid', gap: 16 }}>
                     {error && (
                       <div style={{
                         background: '#fee2e2',
@@ -756,26 +886,29 @@ function App() {
                       </div>
                     )}
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, gridColumn: '1 / -1' }}>
+                    <div className="form-fields-grid" style={{ gridColumn: '1 / -1' }}>
                       {[
-                        { label: 'FULL NAME', name: 'full_name', type: 'text', placeholder: 'John Smith' },
-                        { label: 'JOB TITLE', name: 'job_title', type: 'text', placeholder: 'VP Support' },
-                        { label: 'WORK EMAIL', name: 'work_email', type: 'email', placeholder: 'john@company.com', note: 'Work email only (not gmail, yahoo, outlook)' },
-                        { label: 'COMPANY', name: 'company_name', type: 'text', placeholder: 'Acme Corp' },
+                        { label: 'FULL NAME', name: 'full_name', type: 'text', placeholder: 'John Smith', icon: User },
+                        { label: 'JOB TITLE', name: 'job_title', type: 'text', placeholder: 'VP Support', icon: Briefcase },
+                        { label: 'WORK EMAIL', name: 'work_email', type: 'email', placeholder: 'john@company.com', note: 'Work email only (not gmail, yahoo, outlook)', icon: Mail },
+                        { label: 'COMPANY', name: 'company_name', type: 'text', placeholder: 'Acme Corp', icon: Building2 },
                       ].map(field => (
                         <div key={field.name}>
                           <label className="lbl" style={{ display: 'block', marginBottom: 6 }}>
                             {field.label} <span style={{ color: 'var(--danger)' }}>*</span>
                           </label>
-                          <input
-                            className="form-input"
-                            type={field.type}
-                            name={field.name}
-                            value={formData[field.name as keyof FormData]}
-                            onChange={handleInputChange}
-                            required
-                            placeholder={field.placeholder}
-                          />
+                          <div className="input-group-wrapper">
+                            <field.icon className="input-icon-left" />
+                            <input
+                              className="form-input has-left-icon"
+                              type={field.type}
+                              name={field.name}
+                              value={formData[field.name as keyof FormData]}
+                              onChange={handleInputChange}
+                              required
+                              placeholder={field.placeholder}
+                            />
+                          </div>
                           {field.note && (
                             <p style={{ fontSize: 11, color: 'var(--slate)', marginTop: 4, margin: 0 }}>
                               {field.note}
@@ -834,7 +967,7 @@ function App() {
                       />
                     </div>
 
-                    <button type="submit" disabled={isSubmitting} className="form-submit" style={{ marginTop: 4, gridColumn: '1 / -1' }}>
+                    <button type="submit" disabled={isSubmitting} className="form-submit" style={{ marginTop: 6, gridColumn: '1 / -1' }}>
                       <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
                         {isSubmitting ? (
                           <>
@@ -850,58 +983,75 @@ function App() {
                       </span>
                     </button>
 
-                    <p style={{ fontSize: 11, color: 'var(--slate)', lineHeight: 1.5, margin: 0, textAlign: 'center', gridColumn: '1 / -1' }}>
-                      No spam. Engineer contacts you within 24 hours.
-                    </p>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 2, gridColumn: '1 / -1' }}>
+                      <Lock style={{ width: 12, height: 12, color: 'var(--slate-light)' }} />
+                      <p style={{ fontSize: 11, color: 'var(--slate)', lineHeight: 1.5, margin: 0, textAlign: 'center' }}>
+                        No spam. Engineer contacts you within 24 hours.
+                      </p>
+                    </div>
                   </form>
-                </>
-              ) : (
-                <div style={{
-                  position: 'relative',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 12,
-                  animation: 'fade-in-up 0.5s ease-out',
-                }}>
-                  <div style={{
-                    textAlign: 'center',
-                    padding: '16px 0',
-                  }}>
+                </div>
+              </div>
+            ) : (
+              <div style={{ maxWidth: 760, margin: '0 auto', position: 'relative', zIndex: 2 }}>
+                <div
+                  className="form-card"
+                  style={{
+                    padding: 32,
+                    position: 'relative',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 16,
+                    animation: 'fade-in-up 0.5s ease-out',
+                  }}
+                >
+                  <div style={{ textAlign: 'center', padding: '12px 0 6px' }}>
                     <div style={{
                       display: 'inline-flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      width: 48, height: 48, borderRadius: '50%',
+                      width: 56,
+                      height: 56,
+                      borderRadius: '50%',
                       background: '#D1FAE5',
-                      marginBottom: 12,
+                      marginBottom: 14,
+                      boxShadow: '0 4px 14px rgba(16, 185, 129, 0.2)',
                     }}>
-                      <CheckCircle2 style={{ width: 24, height: 24, color: 'var(--success)' }} />
+                      <CheckCircle2 style={{ width: 28, height: 28, color: 'var(--success)' }} />
                     </div>
-                    <h3 style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)', margin: '0 0 6px 0' }}>
+                    <h3 style={{ fontSize: 22, fontWeight: 800, color: 'var(--ink)', margin: '0 0 8px 0' }}>
                       Sandbox Access Unlocked
                     </h3>
-                    <p style={{ fontSize: 13, color: 'var(--slate)', margin: '0 0 16px 0' }}>
-                      Your live demo is ready to view below.
+                    <p style={{ fontSize: 14, color: 'var(--slate)', margin: '0 0 16px 0', maxWidth: 480, marginInline: 'auto' }}>
+                      Your live demo is ready to view below. A voice solutions engineer will contact you within 24 hours.
                     </p>
                   </div>
 
-                  <video
-                    controls
-                    controlsList="nodownload"
-                    autoPlay
-                    style={{
-                      width: '100%',
-                      borderRadius: 12,
-                      background: '#000',
-                      aspectRatio: '16 / 9',
-                    }}
-                  >
-                    <source src="/asset/Voice Agent_New - Trim.mp4" type="video/mp4" />
-                    Your browser does not support the video tag.
-                  </video>
+                  <div style={{
+                    borderRadius: 14,
+                    overflow: 'hidden',
+                    border: '1px solid rgba(139, 92, 246, 0.2)',
+                    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
+                  }}>
+                    <video
+                      controls
+                      controlsList="nodownload"
+                      autoPlay
+                      style={{
+                        width: '100%',
+                        borderRadius: 12,
+                        background: '#000',
+                        aspectRatio: '16 / 9',
+                        display: 'block',
+                      }}
+                    >
+                      <source src="/asset/Voice Agent_New - Trim.mp4" type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
+                  </div>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
 
           <FaqAccordion scrollToForm={scrollToForm} />
@@ -911,20 +1061,13 @@ function App() {
       {/* ============ FOOTER ============ */}
       <footer className="site-footer" style={{ padding: '64px 0 32px' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr 1fr',
-              gap: 48,
-              marginBottom: 40,
-            }}
-          >
+          <div className="footer-grid" style={{ marginBottom: 40 }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
                 <img src="/logo.webp" alt="Adople AI" style={{ height: 36, width: 'auto', filter: 'brightness(0) invert(1)', opacity: 0.9 }} />
                 <div>
                   <div style={{ fontWeight: 800, color: 'var(--white)', fontSize: 18 }}>Adople AI</div>
-                  <div className="mono" style={{ fontSize: 8, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.08em' }}>
+                  <div className="mono" style={{ fontSize: 8, color: 'rgba(255,255,255,0.6)', letterSpacing: '0.08em' }}>
                     VOICE RAG PLATFORM
                   </div>
                 </div>
@@ -937,7 +1080,7 @@ function App() {
             <div>
               <h4 className="mono" style={{
                 marginBottom: 20, fontSize: 11, letterSpacing: '0.08em',
-                color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', fontWeight: 600,
+                color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', fontWeight: 600,
               }}>
                 Product
               </h4>
@@ -951,7 +1094,7 @@ function App() {
             <div>
               <h4 className="mono" style={{
                 marginBottom: 20, fontSize: 11, letterSpacing: '0.08em',
-                color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', fontWeight: 600,
+                color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', fontWeight: 600,
               }}>
                 Company
               </h4>
@@ -971,7 +1114,7 @@ function App() {
             gap: 20,
             flexWrap: 'wrap',
             fontSize: 13,
-            color: 'rgba(255,255,255,0.3)',
+            color: 'rgba(255,255,255,0.6)',
             alignItems: 'center',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -982,9 +1125,9 @@ function App() {
               </span>
             </div>
             <div style={{ display: 'flex', gap: 20 }}>
-              <a href="#" style={{ color: 'rgba(255,255,255,0.3)' }}>Privacy Policy</a>
-              <a href="#" style={{ color: 'rgba(255,255,255,0.3)' }}>Terms of Service</a>
-              <a href="#" style={{ color: 'rgba(255,255,255,0.3)' }}>Contact Us</a>
+              <a href="#" style={{ color: 'rgba(255,255,255,0.6)' }}>Privacy Policy</a>
+              <a href="#" style={{ color: 'rgba(255,255,255,0.6)' }}>Terms of Service</a>
+              <a href="#" style={{ color: 'rgba(255,255,255,0.6)' }}>Contact Us</a>
             </div>
           </div>
         </div>
