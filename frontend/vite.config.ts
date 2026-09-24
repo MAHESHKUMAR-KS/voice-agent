@@ -6,8 +6,13 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 9040,
+    host: '0.0.0.0',
+    allowedHosts: true,
     strictPort: false,
     open: false,
+    watch: {
+      ignored: ['**/*.mp4', '**/*.webm']
+    },
     proxy: {
       '/api': {
         target: 'http://localhost:9045',
@@ -17,5 +22,7 @@ export default defineConfig({
   },
   preview: {
     port: 9040,
+    host: '0.0.0.0',
+    allowedHosts: true,
   },
 });
