@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 
 interface LoadingScreenProps {
   onComplete?: () => void;
@@ -182,7 +182,7 @@ export default function LoadingScreen({ onComplete, minDuration = 1800 }: Loadin
           width: 520,
           height: 520,
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, rgba(236, 72, 153, 0.05) 45%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(45, 155, 111, 0.12) 0%, rgba(52, 211, 153, 0.05) 45%, transparent 70%)',
           pointerEvents: 'none',
           animation: 'adople-pulse-aura 3s ease-in-out infinite alternate',
         }}
@@ -218,7 +218,7 @@ export default function LoadingScreen({ onComplete, minDuration = 1800 }: Loadin
               position: 'absolute',
               inset: -8,
               borderRadius: 22,
-              background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.18) 0%, rgba(236, 72, 153, 0.12) 100%)',
+              background: 'linear-gradient(135deg, rgba(45, 155, 111, 0.18) 0%, rgba(52, 211, 153, 0.12) 100%)',
               filter: 'blur(10px)',
             }}
           />
@@ -228,8 +228,8 @@ export default function LoadingScreen({ onComplete, minDuration = 1800 }: Loadin
               height: 64,
               borderRadius: 16,
               background: '#FFFFFF',
-              border: '1px solid rgba(139, 92, 246, 0.22)',
-              boxShadow: '0 12px 28px rgba(139, 92, 246, 0.16), 0 2px 6px rgba(0, 0, 0, 0.04)',
+              border: '1px solid rgba(45, 155, 111, 0.22)',
+              boxShadow: '0 12px 28px rgba(45, 155, 111, 0.16), 0 2px 6px rgba(0, 0, 0, 0.04)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -286,7 +286,7 @@ export default function LoadingScreen({ onComplete, minDuration = 1800 }: Loadin
             maxWidth: '75vw',
             height: 3,
             borderRadius: 999,
-            background: 'rgba(139, 92, 246, 0.12)',
+            background: 'rgba(45, 155, 111, 0.12)',
             overflow: 'hidden',
             position: 'relative',
             marginBottom: 16,
@@ -302,10 +302,10 @@ export default function LoadingScreen({ onComplete, minDuration = 1800 }: Loadin
             style={{
               height: '100%',
               width: `${progress}%`,
-              background: 'linear-gradient(90deg, #8B5CF6 0%, #EC4899 100%)',
+              background: 'linear-gradient(90deg, #2D9B6F 0%, #34D399 100%)',
               borderRadius: 999,
               transition: 'width 0.12s linear',
-              boxShadow: '0 0 10px rgba(139, 92, 246, 0.5)',
+              boxShadow: '0 0 10px rgba(45, 155, 111, 0.5)',
               position: 'relative',
             }}
           >

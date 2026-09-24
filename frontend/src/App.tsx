@@ -19,6 +19,7 @@ import {
   ShieldCheck,
   FileCheck,
   Headset,
+  RotateCcw,
 } from 'lucide-react';
 import ProblemSection from './components/ProblemSection';
 import UseCaseTabs from './components/UseCaseTabs';
@@ -152,7 +153,7 @@ function PhoneInputWrapper({ value, onChange, required }: PhoneInputProps) {
           alignItems: 'center',
           gap: '8px',
           padding: '12px 14px',
-          background: 'rgba(139, 92, 246, 0.05)',
+          background: 'rgba(45, 155, 111, 0.05)',
           border: 'none',
           borderRight: '1.5px solid var(--border)',
           fontFamily: 'inherit',
@@ -165,8 +166,8 @@ function PhoneInputWrapper({ value, onChange, required }: PhoneInputProps) {
           minWidth: '105px',
           justifyContent: 'center',
         }}
-        onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(139, 92, 246, 0.1)')}
-        onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(139, 92, 246, 0.05)')}
+        onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(45, 155, 111, 0.1)')}
+        onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(45, 155, 111, 0.05)')}
       >
         <img
           src={`https://flagcdn.com/w20/${selectedCountry.isoCode}.png`}
@@ -197,7 +198,7 @@ function PhoneInputWrapper({ value, onChange, required }: PhoneInputProps) {
             bottom: '100%',
             left: 0,
             background: 'white',
-            border: '1px solid #8B5CF6',
+            border: '1px solid #2D9B6F',
             borderRadius: '8px',
             marginBottom: '4px',
             zIndex: 99999,
@@ -232,13 +233,13 @@ function PhoneInputWrapper({ value, onChange, required }: PhoneInputProps) {
                 width: '100%',
                 padding: '8px 12px',
                 background: 'white',
-                border: '2px solid #8B5CF6',
+                border: '2px solid #2D9B6F',
                 borderRadius: '4px',
                 fontSize: '14px',
                 fontFamily: 'inherit',
                 boxSizing: 'border-box',
                 outline: 'none',
-                boxShadow: '0 0 0 2px rgba(139, 92, 246, 0.15)',
+                boxShadow: '0 0 0 2px rgba(45, 155, 111, 0.15)',
               }}
             />
           </div>
@@ -359,6 +360,53 @@ function App() {
   const [isMarqueeHovered, setIsMarqueeHovered] = useState(false);
   const [showStickyCta, setShowStickyCta] = useState(false);
   const formRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const fullNameInputRef = useRef<HTMLInputElement>(null);
+  const [showLockNotice, setShowLockNotice] = useState(false);
+  const [isFormHighlighted, setIsFormHighlighted] = useState(false);
+
+  const handleLockedVideoClick = () => {
+    if (!isSuccess) {
+      setShowLockNotice(true);
+      setIsFormHighlighted(true);
+      fullNameInputRef.current?.focus();
+      setTimeout(() => {
+        setIsFormHighlighted(false);
+      }, 1500);
+      setTimeout(() => {
+        setShowLockNotice(false);
+      }, 3500);
+    }
+  };
+
+  useEffect(() => {
+    if (isSuccess && videoRef.current) {
+      videoRef.current.play().catch(err => {
+        console.log('Autoplay prevented, ready for user interaction:', err);
+      });
+    }
+  }, [isSuccess]);
+
+  const handleRestartVideo = () => {
+    if (videoRef.current) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.play();
+    }
+  };
+
+  const handleResetForm = () => {
+    setIsSuccess(false);
+    setFormData({
+      full_name: '',
+      work_email: '',
+      job_title: '',
+      company_name: '',
+      use_case: '',
+      other_use_case: '',
+      phone: ''
+    });
+    setError('');
+  };
 
   useEffect(() => {
     const onScroll = () => {
@@ -467,7 +515,7 @@ function App() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginRight: 'auto' }}>
             <img src="/logo.webp" alt="Adople AI" style={{ height: 38, width: 'auto' }} />
             <div>
-              <div style={{ fontWeight: 800, fontSize: 17, color: 'var(--primary)' }}>Adople AI</div>
+              <div style={{ fontWeight: 800, fontSize: 17, color: '#0f172a' }}>Adople AI</div>
               <div className="mono" style={{ fontSize: 8, color: 'var(--slate)', letterSpacing: '0.08em' }}>
                 VOICE RAG PLATFORM
               </div>
@@ -491,7 +539,7 @@ function App() {
 
 
       {/* ============ HERO SECTION ============ */}
-      <section className="hero-section" style={{ padding: '140px 0 80px' }} id="hero">
+      <section className="hero-section" style={{ padding: '100px 0 80px' }} id="hero">
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 1 }}>
 
           <div
@@ -514,8 +562,8 @@ function App() {
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: 8,
-                  background: '#F5F3FF',
-                  border: '1px solid #DDD6FE',
+                  background: '#F0FDF9',
+                  border: '1px solid #A7F3D0',
                   borderRadius: 32,
                   padding: '10px 20px',
                   marginBottom: 48,
@@ -633,7 +681,7 @@ function App() {
               style={{
                 overflow: 'hidden',
                 position: 'relative',
-                background: 'rgba(139, 92, 246, 0.03)',
+                background: 'rgba(45, 155, 111, 0.03)',
                 borderRadius: 16,
                 padding: '32px 0',
               }}
@@ -703,7 +751,7 @@ function App() {
             }}
             id="demo"
             className="demo-section-container"
-            style={{ marginTop: 80, padding: '90px 0', borderTop: '1px solid #e2e8f0', position: 'relative' }}
+            style={{ marginTop: 32, padding: '40px 0 90px', borderTop: '1px solid #e2e8f0', position: 'relative' }}
           >
             <div style={{ maxWidth: 840, margin: '0 auto', textAlign: 'center', marginBottom: 48, position: 'relative', zIndex: 1 }}>
               <div
@@ -714,8 +762,8 @@ function App() {
                   gap: 8,
                   padding: '6px 16px',
                   borderRadius: 24,
-                  background: 'rgba(139, 92, 246, 0.08)',
-                  border: '1px solid rgba(139, 92, 246, 0.2)',
+                  background: 'rgba(45, 155, 111, 0.08)',
+                  border: '1px solid rgba(45, 155, 111, 0.2)',
                   marginBottom: 16,
                   color: 'var(--primary)',
                   fontSize: 12,
@@ -739,319 +787,354 @@ function App() {
               </p>
             </div>
 
-            {!isSuccess ? (
-              <div className="demo-split-grid" style={{ position: 'relative', zIndex: 2 }}>
-                {/* Left Side: Enterprise Value & Trust Panel */}
-                <div className={`demo-value-panel animate-in ${formSectionAnim.visible ? 'visible' : ''} animate-delay-2`}>
-                  <div>
-                    <div style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 8,
-                      padding: '6px 14px',
-                      borderRadius: 20,
-                      background: 'rgba(139, 92, 246, 0.08)',
-                      border: '1px solid rgba(139, 92, 246, 0.2)',
-                      marginBottom: 20,
-                    }}>
-                      <span style={{
-                        width: 8,
-                        height: 8,
-                        borderRadius: '50%',
-                        background: '#16a34a',
-                        boxShadow: '0 0 8px rgba(22, 163, 74, 0.6)',
-                        animation: 'pulse 2s infinite',
-                      }} />
-                      <span className="mono" style={{ fontSize: 11, fontWeight: 600, color: 'var(--primary)', letterSpacing: '0.04em' }}>
-                        INSTANT SANDBOX ACCESS
-                      </span>
-                    </div>
-
-                    <h3 style={{ fontSize: 24, fontWeight: 800, color: 'var(--ink)', lineHeight: 1.3, marginBottom: 12 }}>
-                      Experience Voice Intelligence On Your Real Data
-                    </h3>
-                    <p style={{ fontSize: 14, color: 'var(--slate)', lineHeight: 1.6, marginBottom: 28 }}>
-                      See how teams convert dense operational manuals, customer guidelines, and technical SOPs into live voice assistants.
-                    </p>
-
-                    <div style={{ display: 'grid', gap: 14, marginBottom: 30 }}>
-                      <div className="value-feature-card">
-                        <div className="value-icon-box">
-                          <Sparkles style={{ width: 18, height: 18 }} />
-                        </div>
-                        <div>
-                          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', marginBottom: 2 }}>
-                            Instant Interactive Sandbox
-                          </div>
-                          <div style={{ fontSize: 12, color: 'var(--slate)', lineHeight: 1.5 }}>
-                            Immediate access to sample domain knowledge and conversational audio playback.
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="value-feature-card">
-                        <div className="value-icon-box">
-                          <FileCheck style={{ width: 18, height: 18 }} />
-                        </div>
-                        <div>
-                          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', marginBottom: 2 }}>
-                            Custom Document Ingestion
-                          </div>
-                          <div style={{ fontSize: 12, color: 'var(--slate)', lineHeight: 1.5 }}>
-                            Test your PDFs and standard operating procedures with strictly zero hallucinations.
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="value-feature-card">
-                        <div className="value-icon-box">
-                          <Headset style={{ width: 18, height: 18 }} />
-                        </div>
-                        <div>
-                          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', marginBottom: 2 }}>
-                            Dedicated AI Engineer
-                          </div>
-                          <div style={{ fontSize: 12, color: 'var(--slate)', lineHeight: 1.5 }}>
-                            A voice solutions engineer reviews your architecture and connects within 24 hours.
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div style={{
-                    paddingTop: 20,
-                    borderTop: '1px solid rgba(139, 92, 246, 0.12)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 12,
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 18, flexWrap: 'wrap' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 600, color: 'var(--slate)' }}>
-                        <ShieldCheck style={{ width: 16, height: 16, color: 'var(--success)' }} />
-                        Zero 3rd-party LLM Training
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 600, color: 'var(--slate)' }}>
-                        <Lock style={{ width: 14, height: 14, color: 'var(--primary)' }} />
-                        Full Data Sovereignty
-                      </div>
-                    </div>
-                    <div style={{ fontSize: 12, color: 'var(--slate-light)', fontStyle: 'italic' }}>
-                      &ldquo;The voice accuracy on technical SOPs was immediate. What took 15 minutes now takes 20 seconds.&rdquo;
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right Side: The Form Card */}
-                <div className={`form-card animate-in ${formSectionAnim.visible ? 'visible' : ''} animate-delay-3`}>
-                  <div className="form-header">
-                    <div style={{ position: 'relative', zIndex: 1 }}>
-                      <div style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: 6,
-                        background: 'rgba(255, 255, 255, 0.2)',
-                        borderRadius: 12,
-                        padding: '4px 10px',
-                        marginBottom: 10,
-                        fontSize: 11,
-                        fontWeight: 600,
-                        letterSpacing: '0.04em',
-                        textTransform: 'uppercase',
-                      }}>
-                        <Sparkles style={{ width: 12, height: 12 }} />
-                        Free Trial Access
-                      </div>
-                      <h3 style={{ fontSize: 20, fontWeight: 700, margin: 0, marginBottom: 6, color: 'var(--white)' }}>
-                        Get Started with Voice Assistant
-                      </h3>
-                      <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.85)', margin: 0 }}>
-                        Start creating conversational assistants from your documents.
-                      </p>
-                    </div>
-                  </div>
-
-                  <form onSubmit={handleSubmit} style={{ padding: '24px 28px', display: 'grid', gap: 16 }}>
-                    {error && (
-                      <div style={{
-                        background: '#fee2e2',
-                        border: '1px solid #fecaca',
-                        color: '#991b1b',
-                        fontSize: 13,
-                        padding: 12,
-                        borderRadius: 10,
-                        gridColumn: '1 / -1',
-                      }}>
-                        {error}
-                      </div>
-                    )}
-
-                    <div className="form-fields-grid" style={{ gridColumn: '1 / -1' }}>
-                      {[
-                        { label: 'FULL NAME', name: 'full_name', type: 'text', placeholder: 'John Smith', icon: User },
-                        { label: 'JOB TITLE', name: 'job_title', type: 'text', placeholder: 'VP Support', icon: Briefcase },
-                        { label: 'WORK EMAIL', name: 'work_email', type: 'email', placeholder: 'john@company.com', note: 'Work email only (not gmail, yahoo, outlook)', icon: Mail },
-                        { label: 'COMPANY', name: 'company_name', type: 'text', placeholder: 'Acme Corp', icon: Building2 },
-                      ].map(field => (
-                        <div key={field.name}>
-                          <label className="lbl" style={{ display: 'block', marginBottom: 6 }}>
-                            {field.label} <span style={{ color: 'var(--danger)' }}>*</span>
-                          </label>
-                          <div className="input-group-wrapper">
-                            <field.icon className="input-icon-left" />
-                            <input
-                              className="form-input has-left-icon"
-                              type={field.type}
-                              name={field.name}
-                              value={formData[field.name as keyof FormData]}
-                              onChange={handleInputChange}
-                              required
-                              placeholder={field.placeholder}
-                            />
-                          </div>
-                          {field.note && (
-                            <p style={{ fontSize: 11, color: 'var(--slate)', marginTop: 4, margin: 0 }}>
-                              {field.note}
-                            </p>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-
-                    <div style={{ gridColumn: '1 / -1' }}>
-                      <label className="lbl" style={{ display: 'block', marginBottom: 6 }}>
-                        TARGET USE CASE <span style={{ color: 'var(--danger)' }}>*</span>
-                      </label>
-                      <select
-                        className="form-input"
-                        name="use_case"
-                        value={formData.use_case}
-                        onChange={handleInputChange}
-                        required
-                        style={{ cursor: 'pointer' }}
-                      >
-                        <option value="">Select use case...</option>
-                        <option value="Field Support">Field Support</option>
-                        <option value="Healthcare">Healthcare</option>
-                        <option value="Customer Care">Customer Care</option>
-                        <option value="Internal SOP">Internal SOP</option>
-                        <option value="Other">Other</option>
-                      </select>
-                    </div>
-
-                    {formData.use_case === 'Other' && (
-                      <div style={{ gridColumn: '1 / -1' }}>
-                        <label className="lbl" style={{ display: 'block', marginBottom: 6 }}>
-                          PLEASE SPECIFY <span style={{ color: 'var(--danger)' }}>*</span>
-                        </label>
-                        <input
-                          className="form-input"
-                          type="text"
-                          name="other_use_case"
-                          value={formData.other_use_case}
-                          onChange={handleInputChange}
-                          required={formData.use_case === 'Other'}
-                          placeholder="Describe your use case..."
-                        />
-                      </div>
-                    )}
-
-                    <div style={{ gridColumn: '1 / -1' }}>
-                      <label className="lbl" style={{ display: 'block', marginBottom: 6 }}>
-                        PHONE <span style={{ color: 'var(--danger)' }}>*</span>
-                      </label>
-                      <PhoneInputWrapper
-                        value={formData.phone}
-                        onChange={(phone: string) => setFormData(prev => ({ ...prev, phone }))}
-                        required
-                      />
-                    </div>
-
-                    <button type="submit" disabled={isSubmitting} className="form-submit" style={{ marginTop: 6, gridColumn: '1 / -1' }}>
-                      <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-                        {isSubmitting ? (
-                          <>
-                            <Loader2 style={{ width: 18, height: 18, animation: 'spin 1s linear infinite' }} />
-                            Sending...
-                          </>
-                        ) : (
-                          <>
-                            Start Building Your Assistant
-                            <ChevronRight style={{ width: 18, height: 18 }} />
-                          </>
-                        )}
-                      </span>
-                    </button>
-
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 2, gridColumn: '1 / -1' }}>
-                      <Lock style={{ width: 12, height: 12, color: 'var(--slate-light)' }} />
-                      <p style={{ fontSize: 11, color: 'var(--slate)', lineHeight: 1.5, margin: 0, textAlign: 'center' }}>
-                        No spam. Engineer contacts you within 24 hours.
-                      </p>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            ) : (
-              <div style={{ maxWidth: 760, margin: '0 auto', position: 'relative', zIndex: 2 }}>
+            <div className="demo-split-grid" style={{ position: 'relative', zIndex: 2 }}>
+              {/* Left Side: Video Playcard (Matches Screenshot) */}
+              <div className={`demo-video-card animate-in ${formSectionAnim.visible ? 'visible' : ''} animate-delay-2`}>
                 <div
-                  className="form-card"
-                  style={{
-                    padding: 32,
-                    position: 'relative',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 16,
-                    animation: 'fade-in-up 0.5s ease-out',
-                  }}
+                  className={`video-media-wrapper ${!isSuccess ? 'is-locked' : 'is-unlocked'}`}
+                  onClick={!isSuccess ? handleLockedVideoClick : undefined}
                 >
-                  <div style={{ textAlign: 'center', padding: '12px 0 6px' }}>
-                    <div style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: 56,
-                      height: 56,
-                      borderRadius: '50%',
-                      background: '#D1FAE5',
-                      marginBottom: 14,
-                      boxShadow: '0 4px 14px rgba(16, 185, 129, 0.2)',
-                    }}>
-                      <CheckCircle2 style={{ width: 28, height: 28, color: 'var(--success)' }} />
-                    </div>
-                    <h3 style={{ fontSize: 22, fontWeight: 800, color: 'var(--ink)', margin: '0 0 8px 0' }}>
-                      Sandbox Access Unlocked
-                    </h3>
-                    <p style={{ fontSize: 14, color: 'var(--slate)', margin: '0 0 16px 0', maxWidth: 480, marginInline: 'auto' }}>
-                      Your live demo is ready to view below. A voice solutions engineer will contact you within 24 hours.
-                    </p>
+                  {/* Top-Left Badge */}
+                  <div className="platform-demo-badge">
+                    {isSuccess ? (
+                      <>
+                        <span className="live-pulse-dot" />
+                        <span>Interactive Demo</span>
+                      </>
+                    ) : (
+                      <span>Platform Demo</span>
+                    )}
                   </div>
 
-                  <div style={{
-                    borderRadius: 14,
-                    overflow: 'hidden',
-                    border: '1px solid rgba(139, 92, 246, 0.2)',
-                    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)',
-                  }}>
+                  {isSuccess ? (
                     <video
+                      ref={videoRef}
                       controls
-                      controlsList="nodownload"
                       autoPlay
-                      style={{
-                        width: '100%',
-                        borderRadius: 12,
-                        background: '#000',
-                        aspectRatio: '16 / 9',
-                        display: 'block',
-                      }}
+                      playsInline
+                      controlsList="nodownload"
+                      className="demo-active-video"
                     >
                       <source src="/asset/Voice Agent_New - Trim.mp4" type="video/mp4" />
                       Your browser does not support the video tag.
                     </video>
-                  </div>
+                  ) : (
+                    <div className="video-poster-container">
+                      <img
+                        src="/demo-poster.jpg"
+                        alt="Voice Assistant Platform Demo"
+                        className="video-poster-img"
+                      />
+                      <div className="video-poster-overlay" />
+
+                      {/* Center Play Button (Teal circle matching screenshot) */}
+                      <button
+                        type="button"
+                        className="demo-center-play-btn"
+                        aria-label="Play Demo Video"
+                        onClick={handleLockedVideoClick}
+                      >
+                        <div className="demo-play-btn-pulse" />
+                        <svg
+                          className="demo-play-icon"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                        >
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                      </button>
+
+                      {/* Locked Feedback Popover */}
+                      {showLockNotice && (
+                        <div className="video-lock-popover">
+                          <Lock style={{ width: 14, height: 14, color: '#00B4D8' }} />
+                          <span>Fill out the form to unlock this video!</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Subtext under video frame */}
+                <div className="video-card-caption">
+                  {!isSuccess ? (
+                    <p>
+                      Unlock to see how Adople AI Voice Assistant engages users, analyzes documents, and answers questions in real-time.
+                    </p>
+                  ) : (
+                    <p className="caption-unlocked">
+                      <CheckCircle2 style={{ width: 16, height: 16, color: '#10b981', flexShrink: 0 }} />
+                      <span>Demo Unlocked — Adople AI Voice Assistant live document intelligence walkthrough.</span>
+                    </p>
+                  )}
                 </div>
               </div>
-            )}
+
+              {/* Right Side: Watch a Demo Form Card (Matches Screenshot) */}
+              {!isSuccess ? (
+                <div className={`demo-watch-card ${isFormHighlighted ? 'highlight-pulse' : ''} animate-in ${formSectionAnim.visible ? 'visible' : ''} animate-delay-3`}>
+                  <div>
+                    <div className="demo-watch-header">
+                      <h3 className="demo-watch-title">Watch a Demo</h3>
+                      <p className="demo-watch-subtitle">
+                        Enter your details below to access the interactive Voice Assistant product demo.
+                      </p>
+                    </div>
+
+                    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                      {error && (
+                        <div style={{
+                          background: '#fee2e2',
+                          border: '1px solid #fecaca',
+                          color: '#991b1b',
+                          fontSize: 13,
+                          padding: 12,
+                          borderRadius: 9,
+                        }}>
+                          {error}
+                        </div>
+                      )}
+
+                      <div className="demo-watch-grid">
+                        {/* Row 1: Full Name & Work Email */}
+                        <div>
+                          <input
+                            ref={fullNameInputRef}
+                            className="demo-clean-input"
+                            type="text"
+                            name="full_name"
+                            value={formData.full_name}
+                            onChange={handleInputChange}
+                            required
+                            placeholder="Full Name *"
+                            aria-label="Full Name"
+                          />
+                        </div>
+
+                        <div>
+                          <input
+                            className="demo-clean-input"
+                            type="email"
+                            name="work_email"
+                            value={formData.work_email}
+                            onChange={handleInputChange}
+                            required
+                            placeholder="Work Email *"
+                            aria-label="Work Email"
+                          />
+                        </div>
+
+                        {/* Row 2: Job Title & Company Name */}
+                        <div>
+                          <input
+                            className="demo-clean-input"
+                            type="text"
+                            name="job_title"
+                            value={formData.job_title}
+                            onChange={handleInputChange}
+                            required
+                            placeholder="Job Title *"
+                            aria-label="Job Title"
+                          />
+                        </div>
+
+                        <div>
+                          <input
+                            className="demo-clean-input"
+                            type="text"
+                            name="company_name"
+                            value={formData.company_name}
+                            onChange={handleInputChange}
+                            required
+                            placeholder="Company Name *"
+                            aria-label="Company Name"
+                          />
+                        </div>
+
+                        {/* Row 3: Target Use Case & Phone */}
+                        <div style={{ position: 'relative' }}>
+                          <select
+                            className="demo-clean-input"
+                            name="use_case"
+                            value={formData.use_case}
+                            onChange={handleInputChange}
+                            required
+                            aria-label="Target Use Case"
+                            style={{
+                              cursor: 'pointer',
+                              color: formData.use_case ? '#0f172a' : '#94a3b8',
+                              appearance: 'none',
+                              paddingRight: 32,
+                            }}
+                          >
+                            <option value="" disabled>Target Use Case *</option>
+                            <option value="Field Support" style={{ color: '#0f172a' }}>Field Support</option>
+                            <option value="Healthcare" style={{ color: '#0f172a' }}>Healthcare</option>
+                            <option value="Customer Care" style={{ color: '#0f172a' }}>Customer Care</option>
+                            <option value="Internal SOP" style={{ color: '#0f172a' }}>Internal SOP</option>
+                            <option value="Other" style={{ color: '#0f172a' }}>Other</option>
+                          </select>
+                          <ChevronDown
+                            style={{
+                              position: 'absolute',
+                              right: 12,
+                              top: '50%',
+                              transform: 'translateY(-50%)',
+                              width: 14,
+                              height: 14,
+                              color: '#94a3b8',
+                              pointerEvents: 'none',
+                            }}
+                          />
+                        </div>
+
+                        <div>
+                          <PhoneInputWrapper
+                            value={formData.phone}
+                            onChange={(phone: string) => setFormData(prev => ({ ...prev, phone }))}
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      {formData.use_case === 'Other' && (
+                        <div>
+                          <input
+                            className="demo-clean-input"
+                            type="text"
+                            name="other_use_case"
+                            value={formData.other_use_case}
+                            onChange={handleInputChange}
+                            required={formData.use_case === 'Other'}
+                            placeholder="Please specify your use case *"
+                            aria-label="Please specify your use case"
+                          />
+                        </div>
+                      )}
+
+                      <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="demo-cta-submit-btn"
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 style={{ width: 18, height: 18, animation: 'spin 1s linear infinite' }} />
+                            <span>Unlocking Demo...</span>
+                          </>
+                        ) : (
+                          <span>Watch a Demo</span>
+                        )}
+                      </button>
+
+                      <div className="demo-security-note">
+                        <Lock style={{ width: 12, height: 12, color: '#009E90' }} />
+                        <span>No spam. No obligation</span>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              ) : (
+                <div className={`demo-watch-card animate-in ${formSectionAnim.visible ? 'visible' : ''} animate-delay-3`}>
+                  <div style={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'center', textAlign: 'center', padding: '16px 8px' }}>
+                    <div style={{
+                      width: 56,
+                      height: 56,
+                      borderRadius: '50%',
+                      background: 'rgba(16, 185, 129, 0.12)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      margin: '0 auto 16px',
+                      boxShadow: '0 4px 16px rgba(16, 185, 129, 0.25)',
+                    }}>
+                      <CheckCircle2 style={{ width: 30, height: 30, color: '#10b981' }} />
+                    </div>
+
+                    <h3 style={{ fontSize: 22, fontWeight: 800, color: '#0f172a', margin: '0 0 8px 0' }}>
+                      Demo Access Unlocked!
+                    </h3>
+                    <p style={{ fontSize: 13.5, color: '#64748b', margin: '0 0 20px 0', lineHeight: 1.5 }}>
+                      Your interactive product demo is currently playing on the left.
+                    </p>
+
+                    <div style={{
+                      background: '#f8fafc',
+                      border: '1px solid #e2e8f0',
+                      borderRadius: 12,
+                      padding: '14px 18px',
+                      textAlign: 'left',
+                      marginBottom: 20,
+                    }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: '#009E90', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>
+                        Subscriber Details
+                      </div>
+                      <div style={{ fontSize: 13, color: '#1e293b', marginBottom: 4 }}>
+                        <strong>Name:</strong> {formData.full_name || 'Demo User'}
+                      </div>
+                      <div style={{ fontSize: 13, color: '#1e293b', marginBottom: 4 }}>
+                        <strong>Email:</strong> {formData.work_email}
+                      </div>
+                      {formData.company_name && (
+                        <div style={{ fontSize: 13, color: '#1e293b' }}>
+                          <strong>Company:</strong> {formData.company_name}
+                        </div>
+                      )}
+                    </div>
+
+                    <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
+                      <button
+                        type="button"
+                        onClick={handleRestartVideo}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 6,
+                          padding: '10px 18px',
+                          background: '#009E90',
+                          color: '#ffffff',
+                          borderRadius: 8,
+                          border: 'none',
+                          fontSize: 13,
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                          transition: 'all 0.2s',
+                        }}
+                      >
+                        <RotateCcw style={{ width: 14, height: 14 }} />
+                        <span>Restart Video</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={handleResetForm}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 6,
+                          padding: '10px 18px',
+                          background: '#f1f5f9',
+                          color: '#475569',
+                          borderRadius: 8,
+                          border: '1px solid #cbd5e1',
+                          fontSize: 13,
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                          transition: 'all 0.2s',
+                        }}
+                      >
+                        <span>Submit Another Request</span>
+                      </button>
+                    </div>
+
+                    <div className="demo-security-note" style={{ marginTop: 22 }}>
+                      <Lock style={{ width: 12, height: 12, color: '#009E90' }} />
+                      <span>A voice solutions engineer will contact you within 24 hours.</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           <FaqAccordion scrollToForm={scrollToForm} />

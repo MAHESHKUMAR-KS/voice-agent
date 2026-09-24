@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { ChevronDown, ArrowRight } from 'lucide-react';
 import useScrollReveal from '../hooks/useScrollReveal';
 
@@ -175,9 +175,9 @@ export default function FaqAccordion({ scrollToForm }: { scrollToForm: () => voi
           style={{
             marginTop: 80,
             padding: 48,
-            background: 'linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 100%)',
+            background: 'linear-gradient(135deg, #F0FDF9 0%, #DCFCE7 100%)',
             borderRadius: 12,
-            border: '1px solid #DDD6FE',
+            border: '1px solid #A7F3D0',
             textAlign: 'center',
           }}
         >
@@ -217,7 +217,7 @@ export default function FaqAccordion({ scrollToForm }: { scrollToForm: () => voi
               transition: 'all 0.3s',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = '#7C3AED';
+              e.currentTarget.style.background = '#1E7A54';
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.background = 'var(--primary)';

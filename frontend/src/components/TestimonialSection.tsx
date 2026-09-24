@@ -39,8 +39,7 @@ export default function TestimonialSection() {
     <section
       ref={sectionAnim.ref}
       style={{
-        padding: '100px 0',
-        background: 'var(--paper)',
+        padding: '40px 0 24px',
       }}
     >
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
@@ -82,10 +81,8 @@ export default function TestimonialSection() {
               key={i}
               className={`animate-in ${sectionAnim.visible ? 'visible' : ''} animate-delay-${i + 2}`}
               style={{
-                background: 'white',
-                borderRadius: 16,
-                padding: '24px 24px 20px',
-                border: '1px solid #e2e8f0',
+                background: 'transparent',
+                padding: '12px 0 20px',
                 position: 'relative',
                 overflow: 'hidden',
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -94,27 +91,13 @@ export default function TestimonialSection() {
                 justifyContent: 'space-between',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = '0 16px 36px rgba(139, 92, 246, 0.12)';
                 e.currentTarget.style.transform = 'translateY(-4px)';
-                e.currentTarget.style.borderColor = 'rgba(139, 92, 246, 0.3)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = 'none';
                 e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.borderColor = '#e2e8f0';
               }}
             >
-              {/* Gradient top accent */}
-              <div
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  height: 3,
-                  background: 'linear-gradient(90deg, var(--primary), var(--accent))',
-                }}
-              />
+
 
               <div>
                 {/* Company Logo */}
@@ -171,7 +154,7 @@ export default function TestimonialSection() {
                     height: 40,
                     borderRadius: '50%',
                     background: 'var(--primary-light)',
-                    border: '1px solid #DDD6FE',
+                    border: '1px solid #A7F3D0',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',

@@ -1,4 +1,4 @@
-import { ArrowRight } from 'lucide-react';
+﻿import { ArrowRight } from 'lucide-react';
 
 interface StickyCtaButtonProps {
   show: boolean;
@@ -27,7 +27,7 @@ export default function StickyCtaButton({ show, scrollToForm }: StickyCtaButtonP
         alignItems: 'center',
         gap: 8,
         zIndex: 999,
-        boxShadow: '0 12px 32px rgba(139, 92, 246, 0.3)',
+        boxShadow: '0 12px 32px rgba(45, 155, 111, 0.3)',
         opacity: show ? 1 : 0,
         transform: show ? 'translateY(0)' : 'translateY(16px)',
         pointerEvents: show ? 'auto' : 'none',
@@ -37,24 +37,24 @@ export default function StickyCtaButton({ show, scrollToForm }: StickyCtaButtonP
       }}
       onMouseEnter={(e) => {
         if (!show) return;
-        e.currentTarget.style.background = '#7C3AED';
-        e.currentTarget.style.boxShadow = '0 16px 40px rgba(139, 92, 246, 0.4)';
+        e.currentTarget.style.background = '#1E7A54';
+        e.currentTarget.style.boxShadow = '0 16px 40px rgba(45, 155, 111, 0.4)';
         e.currentTarget.style.transform = 'translateY(0) scale(1.05)';
       }}
       onMouseLeave={(e) => {
         if (!show) return;
         e.currentTarget.style.background = 'var(--primary)';
-        e.currentTarget.style.boxShadow = '0 12px 32px rgba(139, 92, 246, 0.3)';
+        e.currentTarget.style.boxShadow = '0 12px 32px rgba(45, 155, 111, 0.3)';
         e.currentTarget.style.transform = 'translateY(0) scale(1)';
       }}
     >
       <style>{`
         @keyframes pulse {
           0%, 100% {
-            box-shadow: 0 12px 32px rgba(139, 92, 246, 0.3);
+            box-shadow: 0 12px 32px rgba(45, 155, 111, 0.3);
           }
           50% {
-            box-shadow: 0 12px 32px rgba(139, 92, 246, 0.5);
+            box-shadow: 0 12px 32px rgba(45, 155, 111, 0.5);
           }
         }
       `}</style>
